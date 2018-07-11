@@ -8,6 +8,6 @@ export class BasePageComponent {
   }
 
   public handleError(e) {
-    this._notificationService.collect(e);
+    this._notificationService.addError(e);
   }
 }

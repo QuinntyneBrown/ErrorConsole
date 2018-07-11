@@ -2,7 +2,6 @@ import { Component, Input, EventEmitter, Output } from "@angular/core";
 import { Subject, BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
 
-
 @Component({
   templateUrl: "./error-console.component.html",
   styleUrls: ["./error-console.component.css"],
@@ -12,19 +11,12 @@ export class ErrorConsoleComponent {
 
   public onDestroy: Subject<void> = new Subject<void>();
 
-  ngOnInit() {
-    this.errors$.asObservable()
-      .pipe(tap(x => this.isOpen = true))
-      .subscribe();
-  }
   @Input()
   public errors$: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
   ngOnDestroy() {
     this.onDestroy.next();	
   }
-
-  public isOpen: boolean;
 
   @Output()
   public close: EventEmitter<any> = new EventEmitter();

@@ -20,15 +20,10 @@ export class MasterPageComponent {
         else {
           this.isErrorConsoleOpen = true;
         }
-
       }))
       .subscribe();
   }
-
-  public toggleErrorConsole() {
-
-  }
-
+  
   public signOut() {
     this._authService.logout();
   }

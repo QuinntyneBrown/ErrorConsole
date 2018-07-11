@@ -16,7 +16,6 @@
     </div>
 
     <app-error-console [errors$]="notificationService.errors$"
-                       (click)="toggleErrorConsole()"
                        (close)="closeErrorConsole()"
                        *ngIf="isErrorConsoleOpen">
     </app-error-console>

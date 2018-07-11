@@ -10,7 +10,7 @@ export class NotificationService {
 
   public errors$: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
-  public collect(e) {    
+  public addError(e) {    
     this.errors$.next([e, ...this.errors$.value]);
   }
 

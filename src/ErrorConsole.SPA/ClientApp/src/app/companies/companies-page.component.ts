@@ -1,10 +1,10 @@
 import { Component } from "@angular/core";
-import { Subject, BehaviorSubject } from "rxjs";
-import { CompanyService } from "./company.service";
-import { Company } from "./company.model";
+import { BehaviorSubject, Subject } from "rxjs";
 import { map, takeUntil } from "rxjs/operators";
 import { BasePageComponent } from "../core/base-page.component";
 import { NotificationService } from "../core/notification.service";
+import { Company } from "./company.model";
+import { CompanyService } from "./company.service";
 
 @Component({
   templateUrl: "./companies-page.component.html",
@@ -12,8 +12,8 @@ import { NotificationService } from "../core/notification.service";
   selector: "app-companies-page"
 })
 export class CompaniesPageComponent extends BasePageComponent { 
-  constructor(private _companyService: CompanyService, _errorService: NotificationService) {
-    super(_errorService);
+  constructor(private _companyService: CompanyService, _notificationService: NotificationService) {
+    super(_notificationService);
   }
   
   ngOnInit() {

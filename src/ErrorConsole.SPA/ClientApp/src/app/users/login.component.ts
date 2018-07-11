@@ -6,7 +6,7 @@ import { MatSnackBarRef, SimpleSnackBar } from '@angular/material';
 import { AuthService } from '../core/auth.service';
 import { RedirectService } from '../core/redirect.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorService } from '../core/error.service';
+import { NotificationService } from '../core/notification.service';
 
 @Component({
   templateUrl: './login.component.html',
@@ -17,7 +17,7 @@ export class LoginComponent {
   constructor(
     private _authService: AuthService,
     private _elementRef: ElementRef,
-    private _errorService: ErrorService,
+    private _errorService: NotificationService,
     private _loginRedirectService: RedirectService,
     private _renderer: Renderer
   ) {}

@@ -5,7 +5,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 
 @Injectable()
-export class ErrorService {
+export class NotificationService {
   constructor(private _snackBar: MatSnackBar) {}
 
   public errors$: BehaviorSubject<any[]> = new BehaviorSubject([]);

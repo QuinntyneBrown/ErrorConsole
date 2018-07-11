@@ -5,14 +5,14 @@ import { tap } from 'rxjs/operators';
 import { accessTokenKey } from '../core/constants';
 import { LocalStorageService } from '../core/local-storage.service';
 import { RedirectService } from './redirect.service';
-import { ErrorService } from './error.service';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class HttpErrorResponseInterceptor implements HttpInterceptor {
   constructor(
     private _localStorageService: LocalStorageService,
     private _redirectService: RedirectService,
-    private _errorService: ErrorService
+    private _errorService: NotificationService
   ) {}
   intercept(httpRequest: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(httpRequest).pipe(

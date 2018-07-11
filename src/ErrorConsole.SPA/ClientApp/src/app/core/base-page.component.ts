@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
 import { Subject } from "rxjs";
-import { ErrorService } from "../core/error.service";
+import { NotificationService } from "../core/notification.service";
 
 export class BasePageComponent { 
-  constructor(protected _errorService: ErrorService) {
+  constructor(protected _errorService: NotificationService) {
     this.handleError = this.handleError.bind(this);
   }
 

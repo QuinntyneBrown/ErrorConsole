@@ -10,9 +10,14 @@
     <button mat-button (click)="signOut()">Sign Out</button>
   </mat-sidenav>
   <mat-sidenav-content>
+
     <div class="router-outlet-container">
       <router-outlet #router></router-outlet>
     </div>
-    <app-error-console [errors$]="errorService.errors$"></app-error-console>
+
+    <app-error-console [errors$]="notificationService.errors$"
+                       (click)="toggleErrorConsole()">
+    </app-error-console>
+
   </mat-sidenav-content>
 </mat-sidenav-container>

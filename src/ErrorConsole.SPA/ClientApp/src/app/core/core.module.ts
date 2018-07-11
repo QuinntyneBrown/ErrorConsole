@@ -7,7 +7,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { ErrorService } from './error.service';
+import { NotificationService } from './notification.service';
 import { HeaderInterceptor } from './headers.interceptor';
 import { LocalStorageService } from './local-storage.service';
 import { Logger } from './logger.service';
@@ -28,7 +28,7 @@ const providers = [
 
   AuthGuard,
   AuthService,
-  ErrorService,
+  NotificationService,
   LocalStorageService,
   RedirectService,
   Logger

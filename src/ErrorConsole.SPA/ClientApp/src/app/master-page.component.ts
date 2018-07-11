@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from './core/auth.service';
-import { ErrorService } from './core/error.service';
+import { NotificationService } from './core/notification.service';
+import { map, tap, takeUntil } from 'rxjs/operators';
 
 @Component({
   templateUrl: './master-page.component.html',
@@ -8,11 +9,21 @@ import { ErrorService } from './core/error.service';
   selector: 'app-master-page'
 })
 export class MasterPageComponent {
-  constructor(private _authService: AuthService, public errorService: ErrorService) {
+  constructor(private _authService: AuthService, public notificationService: NotificationService) { }
+
+  ngOnInit() {
+    this.notificationService.errors$
+      .pipe(tap(x => { }))
+      .subscribe();
+  }
+
+  public toggleErrorConsole() {
 
   }
 
   public signOut() {
     this._authService.logout();
   }
+
+
 }

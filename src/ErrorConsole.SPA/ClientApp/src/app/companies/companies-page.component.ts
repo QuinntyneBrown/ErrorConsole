@@ -3,8 +3,8 @@ import { Subject, BehaviorSubject } from "rxjs";
 import { CompanyService } from "./company.service";
 import { Company } from "./company.model";
 import { map, takeUntil } from "rxjs/operators";
-import { BasePageComponent } from "../common/base-page.component";
-import { ErrorService } from "../core/error.service";
+import { BasePageComponent } from "../core/base-page.component";
+import { NotificationService } from "../core/notification.service";
 
 @Component({
   templateUrl: "./companies-page.component.html",
@@ -12,7 +12,7 @@ import { ErrorService } from "../core/error.service";
   selector: "app-companies-page"
 })
 export class CompaniesPageComponent extends BasePageComponent { 
-  constructor(private _companyService: CompanyService, _errorService: ErrorService) {
+  constructor(private _companyService: CompanyService, _errorService: NotificationService) {
     super(_errorService);
   }
   
@@ -34,5 +34,4 @@ export class CompaniesPageComponent extends BasePageComponent {
     this.companies$.next([]);
     this.ngOnInit();
   }
-  
 }

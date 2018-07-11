@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { AuthService } from './core/auth.service';
 import { NotificationService } from './core/notification.service';
 import { map, tap, takeUntil } from 'rxjs/operators';
@@ -13,7 +13,15 @@ export class MasterPageComponent {
 
   ngOnInit() {
     this.notificationService.errors$
-      .pipe(tap(x => { }))
+      .pipe(tap(x => {
+        if (this.isErrorConsoleOpen === null) {
+          this.isErrorConsoleOpen = false;
+        }
+        else {
+          this.isErrorConsoleOpen = true;
+        }
+
+      }))
       .subscribe();
   }
 
@@ -25,5 +33,10 @@ export class MasterPageComponent {
     this._authService.logout();
   }
 
+  public closeErrorConsole() {
+    this.isErrorConsoleOpen = false;
+  }
 
+  @HostBinding("class.error-console-is-opened")
+  public isErrorConsoleOpen:boolean = null;
 }

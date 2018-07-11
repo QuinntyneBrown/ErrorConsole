@@ -1,6 +1,7 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, EventEmitter, Output } from "@angular/core";
 import { Subject, BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
+
 
 @Component({
   templateUrl: "./error-console.component.html",
@@ -24,4 +25,7 @@ export class ErrorConsoleComponent {
   }
 
   public isOpen: boolean;
+
+  @Output()
+  public close: EventEmitter<any> = new EventEmitter();
 }

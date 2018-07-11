@@ -16,7 +16,9 @@
     </div>
 
     <app-error-console [errors$]="notificationService.errors$"
-                       (click)="toggleErrorConsole()">
+                       (click)="toggleErrorConsole()"
+                       (close)="closeErrorConsole()"
+                       *ngIf="isErrorConsoleOpen">
     </app-error-console>
 
   </mat-sidenav-content>

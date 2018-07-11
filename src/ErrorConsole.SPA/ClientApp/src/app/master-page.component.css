@@ -33,7 +33,7 @@ h1 {
   height: calc(100vh - 94px);
 }
 
-.router-outlet-container {
+:host(.error-console-is-opened) .router-outlet-container  {
   height: calc(100vh - 364px);
 }
 

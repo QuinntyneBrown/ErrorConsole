@@ -1,0 +1,11 @@
+<section class="mat-typography">
+  <h2>Olivia's Favorite Brands</h2>
+</section>
+
+<mat-list role="list">
+  <mat-list-item *ngFor="let company of (companies$ | async)" role="listitem">{{ company.name }}</mat-list-item>
+</mat-list>
+
+<button mat-button (click)="refresh()">
+  Refresh
+</button>

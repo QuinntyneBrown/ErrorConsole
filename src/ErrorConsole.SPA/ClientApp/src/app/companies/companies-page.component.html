@@ -6,6 +6,10 @@
   Refresh
 </button>
 
+<button mat-button (click)="openAddCompanyOverlay()">
+  Add Company
+</button>
+
 <mat-list role="list">
   <mat-list-item *ngFor="let company of (companies$ | async)" role="listitem">{{ company.name }}</mat-list-item>
 </mat-list>

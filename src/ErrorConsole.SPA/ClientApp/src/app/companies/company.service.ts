@@ -1,7 +1,7 @@
 import { Injectable, Inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, retryWhen, retry } from "rxjs/operators";
 import { baseUrl } from "../core/constants";
 import { Company } from "./company.model";
 
@@ -15,7 +15,8 @@ export class CompanyService {
   public get(): Observable<Array<Company>> {
     return this._client.get<{ companies: Array<Company> }>(`${this._baseUrl}api/companies`)
       .pipe(
-        map(x => x.companies)
+        map(x => x.companies),
+        retry(10)
       );
   }
 
@@ -31,6 +32,8 @@ export class CompanyService {
   }
 
   public save(options: { company: Company }): Observable<{ companyId: number }> {
-    return this._client.post<{ companyId: number }>(`${this._baseUrl}api/companies`, { company: options.company });
+    return this._client
+      .post<{ companyId: number }>(`${this._baseUrl}api/companies`, { company: options.company })
+      .pipe(retry(10));
   }
 }

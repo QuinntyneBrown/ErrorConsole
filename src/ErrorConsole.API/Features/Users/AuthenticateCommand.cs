@@ -1,8 +1,14 @@
-using FluentValidation;
+using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Identity;
 using ErrorConsole.Core.Interfaces;
+using ErrorConsole.Core.Models;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +34,7 @@ namespace ErrorConsole.API.Features.Users
         public class Response
         {
             public string AccessToken { get; set; }
-            public int UserId { get; set; }
+            public Guid UserId { get; set; }
         }
 
         public class Handler : IRequestHandler<Request, Response>
@@ -49,12 +55,15 @@ namespace ErrorConsole.API.Features.Users
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var user = await _context.Users
-                    .SingleOrDefaultAsync(x => x.Username.ToLower() == request.Username.ToLower());
+                var domainEvents = await _context.DomainEvents.Where(x
+                    => x.DotNetType == typeof(UserCreatedEvent).AssemblyQualifiedName)
+                    .Select(x => JsonConvert.DeserializeObject(x.Data, Type.GetType(x.DotNetType)))
+                    .ToArrayAsync();
 
-                if (user == null)
-                    throw new System.Exception();
-
+                var user = new User(Guid.NewGuid());
+                
+                user = user.Reduce(user, domainEvents);
+                
                 if (user.Password != _passwordHasher.HashPassword(user.Salt, request.Password))
                     throw new System.Exception();
 

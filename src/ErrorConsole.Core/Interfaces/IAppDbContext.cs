@@ -7,8 +7,8 @@ namespace ErrorConsole.Core.Interfaces
 {
     public interface IAppDbContext
     {
-        DbSet<Company> Companies { get; set; }
-        DbSet<User> Users { get; set; }        
+        DbSet<DomainEvent> DomainEvents { get; set; }
+        DbSet<Company> Companies { get; set; }                
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

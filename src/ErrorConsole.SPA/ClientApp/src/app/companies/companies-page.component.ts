@@ -1,18 +1,22 @@
 import { Component } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
-import { map, takeUntil } from "rxjs/operators";
-import { BasePageComponent } from "../core/base-page.component";
+import { map, takeUntil, tap } from "rxjs/operators";
+import { BaseComponent } from "../core/base.component";
 import { NotificationService } from "../core/notification.service";
 import { Company } from "./company.model";
 import { CompanyService } from "./company.service";
+import { AddCompany } from "./add-company";
 
 @Component({
   templateUrl: "./companies-page.component.html",
   styleUrls: ["./companies-page.component.css"],
   selector: "app-companies-page"
 })
-export class CompaniesPageComponent extends BasePageComponent { 
-  constructor(private _companyService: CompanyService, _notificationService: NotificationService) {
+export class CompaniesPageComponent extends BaseComponent { 
+  constructor(
+    private _addCompany: AddCompany,
+    private _companyService: CompanyService,
+    _notificationService: NotificationService) {
     super(_notificationService);
   }
   
@@ -33,5 +37,14 @@ export class CompaniesPageComponent extends BasePageComponent {
   public refresh() {
     this.companies$.next([]);
     this.ngOnInit();
+  }
+
+  public openAddCompanyOverlay() {
+    this._addCompany
+      .create()
+      .pipe(tap(x => {
+        this.companies$.next([...this.companies$.value, x]);
+      }))
+      .subscribe();
   }
 }

@@ -13,6 +13,8 @@ import { LocalStorageService } from './local-storage.service';
 import { Logger } from './logger.service';
 import { RedirectService } from './redirect.service';
 import { HttpErrorResponseInterceptor } from './http-error-response.interceptor';
+import { OverlayRefProvider } from './overlay-ref-provider';
+import { OverlayRefWrapper } from './overlay-ref-wrapper';
 
 const providers = [
   {
@@ -29,6 +31,8 @@ const providers = [
   AuthGuard,
   AuthService,
   NotificationService,
+  OverlayRefProvider,
+  OverlayRefWrapper,
   LocalStorageService,
   RedirectService,
   Logger

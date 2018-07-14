@@ -6,17 +6,25 @@ import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { CompanyService } from './company.service';
 import { CompaniesPageComponent } from './companies-page.component';
+import { AddCompanyComponent } from './add-company.component';
+import { AddCompany } from './add-company';
 
 const declarations = [
-  CompaniesPageComponent
+  CompaniesPageComponent,
+  AddCompanyComponent
 ];
 
 const providers = [
-  CompanyService
+  CompanyService,
+  AddCompany
 ];
 
+const entryComponents = [
+  AddCompanyComponent
+]
+
 @NgModule({
-  declarations: declarations,
+  declarations,
   imports: [
     CommonModule,
     FormsModule,
@@ -27,5 +35,6 @@ const providers = [
     SharedModule
   ],
   providers,
+  entryComponents
 })
 export class CompaniesModule { }

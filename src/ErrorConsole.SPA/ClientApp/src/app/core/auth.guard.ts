@@ -9,7 +9,8 @@ export class AuthGuard implements CanActivate {
   constructor(
     private _localStorageService: LocalStorageService,
     private _loginRedirectService: RedirectService
-  ) {}
+  ) { }
+
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const token = this._localStorageService.get({ name: accessTokenKey });
 

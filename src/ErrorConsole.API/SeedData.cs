@@ -7,6 +7,9 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
+using System;
+using Newtonsoft.Json;
+using ErrorConsole.Core.DomainEvents;
 
 namespace ErrorConsole.API
 {
@@ -24,19 +27,34 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                if (context.Users.FirstOrDefault(x => x.Username == "quinntynebrown@gmail.com") == null)
+                
+                var user = new User()
                 {
-                    var user = new User()
+                    Username = "quinntynebrown@gmail.com"
+                };
+
+                user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
+
+                context.DomainEvents.Add(new DomainEvent()
+                {
+                    Data = JsonConvert.SerializeObject(new UserCreatedEvent()
                     {
-                        Username = "quinntynebrown@gmail.com"
-                    };
-                    user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
+                        UserId = Guid.NewGuid(),
+                        Username = "quinntynebrown@gmail.com",
+                        Salt = user.Salt,
+                        Password = user.Password
 
-                    context.Users.Add(user);
-                }
+                    }),
+                    Type = nameof(UserCreatedEvent),
+                    DotNetType = $"{typeof(UserCreatedEvent).AssemblyQualifiedName}",
+                    CreatedOn = DateTime.UtcNow
+                });
 
+            
                 context.SaveChanges();
             }
+
+
         }
 
         internal class CompanyConfiguration

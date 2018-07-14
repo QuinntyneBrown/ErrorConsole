@@ -1,28 +1,22 @@
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
-using FluentValidation;
 using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
+using ErrorConsole.Core.Common;
+using System;
 
 namespace ErrorConsole.API.Features.Companies
 {
-    public class SaveCompanyCommand
+    public class MaybeSaveCompanyCommand
     {
-        public class Validator: AbstractValidator<Request> {
-            public Validator()
-            {
-                RuleFor(request => request.Company.CompanyId).NotNull();
-            }
-        }
-
         public class Request : IRequest<Response> {
             public CompanyApiModel Company { get; set; }
         }
 
         public class Response
         {			
-            public int CompanyId { get; set; }
+            public Guid CompanyId { get; set; }
         }
 
         public class Handler : IRequestHandler<Request, Response>
@@ -33,6 +27,8 @@ namespace ErrorConsole.API.Features.Companies
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
+                if (RandomNumberFactory.Create() > 14) throw new Exception();
+
                 var company = await _context.Companies.FindAsync(request.Company.CompanyId);
 
                 if (company == null) _context.Companies.Add(company = new Company());

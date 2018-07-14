@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ErrorConsole.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180711144810_Initial")]
+    [Migration("20180714204414_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,9 +23,8 @@ namespace ErrorConsole.Infrastructure.Migrations
 
             modelBuilder.Entity("ErrorConsole.Core.Models.Company", b =>
                 {
-                    b.Property<int>("CompanyId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("CompanyId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
@@ -34,11 +33,28 @@ namespace ErrorConsole.Infrastructure.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("ErrorConsole.Core.Models.DomainEvent", b =>
+                {
+                    b.Property<Guid>("DomainEventId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedOn");
+
+                    b.Property<string>("Data");
+
+                    b.Property<string>("DotNetType");
+
+                    b.Property<string>("Type");
+
+                    b.HasKey("DomainEventId");
+
+                    b.ToTable("DomainEvents");
+                });
+
             modelBuilder.Entity("ErrorConsole.Core.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Password");
 

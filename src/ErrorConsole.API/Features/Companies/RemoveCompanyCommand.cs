@@ -1,5 +1,4 @@
 using ErrorConsole.Core.Interfaces;
-using FluentValidation;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,14 +7,6 @@ namespace ErrorConsole.API.Features.Companies
 {
     public class RemoveCompanyCommand
     {
-        public class Validator : AbstractValidator<Request>
-        {
-            public Validator()
-            {
-                RuleFor(request => request.CompanyId).NotEqual(0);
-            }
-        }
-
         public class Request : IRequest
         {
             public int CompanyId { get; set; }

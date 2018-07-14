@@ -15,7 +15,7 @@ namespace ErrorConsole.API.Features.Companies
         public CompaniesController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost]
-        public async Task<ActionResult<SaveCompanyCommand.Response>> Save(SaveCompanyCommand.Request request)
+        public async Task<ActionResult<MaybeSaveCompanyCommand.Response>> Save(MaybeSaveCompanyCommand.Request request)
             => await _mediator.Send(request);
         
         [HttpDelete("{companyId}")]
@@ -27,7 +27,7 @@ namespace ErrorConsole.API.Features.Companies
             => await _mediator.Send(request);
 
         [HttpGet]
-        public async Task<ActionResult<GetCompaniesQuery.Response>> Get()
-            => await _mediator.Send(new GetCompaniesQuery.Request());
+        public async Task<ActionResult<MaybeGetCompaniesQuery.Response>> Get()
+            => await _mediator.Send(new MaybeGetCompaniesQuery.Request());
     }
 }

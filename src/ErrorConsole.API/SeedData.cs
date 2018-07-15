@@ -27,30 +27,37 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                
-                var user = new User()
-                {
-                    Username = "quinntynebrown@gmail.com"
-                };
 
-                user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
-
-                context.DomainEvents.Add(new DomainEvent()
+                if (context.DomainEvents
+                    .Where(x => x.AggregateId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
+                    .FirstOrDefault() == null)
                 {
-                    Data = JsonConvert.SerializeObject(new UserCreatedEvent()
+                    var userId = new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3");
+
+                    var user = new User()
                     {
-                        UserId = Guid.NewGuid(),
-                        Username = "quinntynebrown@gmail.com",
-                        Salt = user.Salt,
-                        Password = user.Password
+                        Username = "quinntynebrown@gmail.com"
+                    };
 
-                    }),
-                    Type = nameof(UserCreatedEvent),
-                    DotNetType = $"{typeof(UserCreatedEvent).AssemblyQualifiedName}",
-                    CreatedOn = DateTime.UtcNow
-                });
+                    user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
 
-            
+                    context.DomainEvents.Add(new DomainEvent()
+                    {
+                        Data = JsonConvert.SerializeObject(new UserCreatedEvent()
+                        {
+                            UserId = userId,
+                            Username = "quinntynebrown@gmail.com",
+                            Salt = user.Salt,
+                            Password = user.Password
+
+                        }),
+                        AggregateId = userId,
+                        Type = nameof(UserCreatedEvent),
+                        DotNetType = $"{typeof(UserCreatedEvent).AssemblyQualifiedName}",
+                        CreatedOn = DateTime.UtcNow
+                    });
+                }
+
                 context.SaveChanges();
             }
 

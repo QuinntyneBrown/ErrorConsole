@@ -55,22 +55,25 @@ namespace ErrorConsole.API.Features.Users
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var domainEvents = await _context.DomainEvents.Where(x
-                    => x.DotNetType == typeof(UserCreatedEvent).AssemblyQualifiedName)
+
+                var userId = _context.DomainEvents.FromSql($"SELECT * FROM DomainEvents WHERE JSON_VALUE([Data],'$.Username')={request.Username} AND DotNetType ={typeof(UserCreatedEvent).AssemblyQualifiedName}")
+                    .Select(x => JsonConvert.DeserializeObject<UserCreatedEvent>(x.Data).UserId)
+                    .Single();
+                
+                var events = await _context.DomainEvents.Where(x
+                    => x.AggregateId == userId)
                     .Select(x => JsonConvert.DeserializeObject(x.Data, Type.GetType(x.DotNetType)))
                     .ToArrayAsync();
 
-                var user = new User(Guid.NewGuid());
-                
-                user = user.Reduce(user, domainEvents);
-                
+                var user = User.Create(userId, events);
+
                 if (user.Password != _passwordHasher.HashPassword(user.Salt, request.Password))
                     throw new System.Exception();
 
                 return new Response()
                 {
                     AccessToken = _securityTokenFactory.Create(request.Username),
-                    UserId = user.UserId
+                    UserId = userId
                 };
             }            
         }

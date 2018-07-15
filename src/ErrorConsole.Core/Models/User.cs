@@ -6,10 +6,7 @@ namespace ErrorConsole.Core.Models
 {
     public class User
     {
-        public User(Guid userId)
-        {
-            UserId = userId;
-        }
+        public User(Guid userId) => UserId = userId;
 
         public User()
         {
@@ -18,6 +15,37 @@ namespace ErrorConsole.Core.Models
             {
                 rng.GetBytes(Salt);
             }
+        }
+
+        public static User Create(Guid userId, object[] events)
+        {
+            var user = new User(userId);
+
+            foreach(var @event in events)
+            {
+                switch (@event) {
+                    case UserCreatedEvent userCreatedEvent:
+                            user = new User()
+                            {
+                                Username = userCreatedEvent.Username,
+                                Salt = userCreatedEvent.Salt,
+                                Password = userCreatedEvent.Password
+                            };
+                        break;
+                }
+            }
+            
+            return user;
+        }
+
+        public User Create(UserCreatedEvent @event)
+        {
+            return new User()
+            {
+                Password = @event.Password,
+                Salt = @event.Salt,
+                UserId = @event.UserId
+            };            
         }
 
         public User Reduce(User user, object[] events) {

@@ -3,7 +3,7 @@ using System;
 
 namespace ErrorConsole.Core.DomainEvents
 {
-    public class UserCreatedEvent: INotification
+    public class UserCreated: INotification
     {
         public Guid UserId { get; set; }
         public string Username { get; set; }

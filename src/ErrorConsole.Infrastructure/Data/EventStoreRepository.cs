@@ -58,5 +58,17 @@ namespace ErrorConsole.Infrastructure.Data
 
             _context.SaveChanges();
         }
+
+        public T[] GetAllEventsOfType<T>()
+            => GetAllByEvent<T>().Select(x => JsonConvert.DeserializeObject(x.Data, typeof(T))).ToArray() as T[];
+
+        public object[] GetAllEvents(Guid aggregateId)
+            => All(aggregateId).Select(x => JsonConvert.DeserializeObject(x.Data, Type.GetType(x.DotNetType))).ToArray();
+
+        public T GetEventByEventProperyValue<T>(string property, string value)
+        {
+            var domainEvent = GetAllByEventProperyValue<T>(property, value).Single();
+            return JsonConvert.DeserializeObject<T>(domainEvent.Data);
+        }
     }
 }

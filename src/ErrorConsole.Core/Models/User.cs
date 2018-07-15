@@ -1,10 +1,11 @@
+using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
 using System;
 using System.Security.Cryptography;
 
 namespace ErrorConsole.Core.Models
 {
-    public class User
+    public class User: Aggregate
     {
         public User(Guid userId) => UserId = userId;
 
@@ -17,14 +18,14 @@ namespace ErrorConsole.Core.Models
             }
         }
 
-        public static User Create(Guid userId, object[] events)
+        public static User Load(Guid userId, object[] events)
         {
             var user = new User(userId);
 
             foreach(var @event in events)
             {
                 switch (@event) {
-                    case UserCreatedEvent userCreatedEvent:
+                    case UserCreated userCreatedEvent:
                             user = new User()
                             {
                                 Username = userCreatedEvent.Username,
@@ -38,7 +39,7 @@ namespace ErrorConsole.Core.Models
             return user;
         }
 
-        public User Create(UserCreatedEvent @event)
+        public User Create(UserCreated @event)
         {
             return new User()
             {
@@ -54,7 +55,7 @@ namespace ErrorConsole.Core.Models
             {
                 switch (@event)
                 {
-                    case UserCreatedEvent created:
+                    case UserCreated created:
                         user.Password = created.Password;
                         user.Salt = created.Salt;
                         user.Username = created.Username;

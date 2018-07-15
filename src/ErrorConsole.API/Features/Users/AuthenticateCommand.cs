@@ -53,26 +53,20 @@ namespace ErrorConsole.API.Features.Users
                 _passwordHasher = passwordHasher;
             }
 
-            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
-            {                
-                var domainEvent = _repository.GetAllByEventProperyValue<UserCreatedEvent>("Username", request.Username).Single();
-
-                var userId = JsonConvert.DeserializeObject<UserCreatedEvent>(domainEvent.Data).UserId;
+            public Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            {                                
+                var userId = _repository.GetEventByEventProperyValue<UserCreated>("Username",request.Username).UserId;
                 
-                var events = _repository.All(userId)
-                    .Select(x => JsonConvert.DeserializeObject(x.Data, Type.GetType(x.DotNetType)))
-                    .ToArray();
-
-                var user = User.Create(userId, events);
+                var user = User.Load(userId, _repository.GetAllEvents(userId));
 
                 if (user.Password != _passwordHasher.HashPassword(user.Salt, request.Password))
                     throw new System.Exception();
 
-                return new Response()
+                return Task.FromResult(new Response()
                 {
                     AccessToken = _securityTokenFactory.Create(request.Username),
                     UserId = userId
-                };
+                });
             }            
         }
     }

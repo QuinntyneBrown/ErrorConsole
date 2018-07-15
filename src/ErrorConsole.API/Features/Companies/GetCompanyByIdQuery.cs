@@ -6,6 +6,7 @@ using FluentValidation;
 using ErrorConsole.Core.Models;
 using System;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace ErrorConsole.API.Features.Companies
 {
@@ -34,14 +35,14 @@ namespace ErrorConsole.API.Features.Companies
             
 			public Handler(IEventStoreRepository repository) => _repository = repository;
 
-            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var company = Company.Create(request.CompanyId, _repository.All(request.CompanyId).ToArray());
+                var company = Company.Load(request.CompanyId, _repository.GetAllEvents(request.CompanyId));
 
-                return new Response()
+                return Task.FromResult(new Response()
                 {
                     Company = CompanyApiModel.FromCompany(company)
-                };
+                });
             }
         }
     }

@@ -16,16 +16,15 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request>
         {
-            public IEventStoreRepository _repository { get; set; }
-
+            private IEventStoreRepository _repository;
+            
             public Handler(IEventStoreRepository repository) => _repository = repository;
 
-            public async Task Handle(Request request, CancellationToken cancellationToken)
+            public Task Handle(Request request, CancellationToken cancellationToken)
             {
-                _repository.Store(request.CompanyId, new CompanyRemovedEvent()
-                {
-                    CompanyId = request.CompanyId
-                });
+                _repository.Store(request.CompanyId, new CompanyRemoved(request.CompanyId));
+
+                return Task.CompletedTask;
             }
         }
     }

@@ -31,7 +31,13 @@ export class CompanyService {
     return this._client.delete<void>(`${this._baseUrl}api/companies/${options.company.companyId}`);
   }
 
-  public save(options: { company: Company }): Observable<{ companyId: number }> {
+  public create(options: { company: Company }): Observable<{ companyId: number }> {
+    return this._client
+      .post<{ companyId: number }>(`${this._baseUrl}api/companies/create`, { company: options.company })
+      .pipe(retry(10));
+  }
+
+  public update(options: { company: Company }): Observable<{ companyId: number }> {
     return this._client
       .post<{ companyId: number }>(`${this._baseUrl}api/companies`, { company: options.company })
       .pipe(retry(10));

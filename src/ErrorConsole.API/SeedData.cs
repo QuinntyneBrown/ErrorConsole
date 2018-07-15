@@ -43,7 +43,7 @@ namespace ErrorConsole.API
 
                     user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
 
-                    var userCreatedEvent = new UserCreatedEvent()
+                    var userCreatedEvent = new UserCreated()
                     {
                         UserId = userId,
                         Username = "quinntynebrown@gmail.com",
@@ -66,40 +66,40 @@ namespace ErrorConsole.API
             {
                 var repository = new EventStoreRepository(context);
 
-                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Ralph").FirstOrDefault() == null)
+                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Ralph").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store<CompanyCreatedEvent>(aggregateId, new CompanyCreatedEvent()
+                    repository.Store<CompanyCreated>(aggregateId, new CompanyCreated()
                     {
                         CompanyId = aggregateId,
                         Name = "Ralph"
                     });
                 }
 
-                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Kate Spade").FirstOrDefault() == null)
+                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Kate Spade").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store(aggregateId, new CompanyCreatedEvent()
+                    repository.Store(aggregateId, new CompanyCreated()
                     {
                         CompanyId = aggregateId,
                         Name = "Kate Spade"
                     });
                 }
 
-                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Nike").FirstOrDefault() == null)
+                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store(aggregateId, new CompanyCreatedEvent()
+                    repository.Store(aggregateId, new CompanyCreated()
                     {
                         CompanyId = aggregateId,
                         Name = "Nike"
                     });
                 }
 
-                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Nike").FirstOrDefault() == null)
+                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store(aggregateId, new CompanyCreatedEvent()
+                    repository.Store(aggregateId, new CompanyCreated()
                     {
                         CompanyId = aggregateId,
                         Name = "Nike"

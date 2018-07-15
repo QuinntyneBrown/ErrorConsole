@@ -28,19 +28,19 @@ namespace ErrorConsole.API.Features.Companies
 
             public Handler(IEventStoreRepository repository) => _repository = repository;
 
-            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 if (RandomNumberFactory.Create() > 14) throw new Exception();
 
                 var companyId = Guid.NewGuid();
 
-                _repository.Store(companyId, new CompanyCreatedEvent()
+                _repository.Store(companyId, new CompanyCreated()
                 {
                     CompanyId = companyId,
                     Name = request.Company.Name
                 });
                 
-                return new Response() { CompanyId = companyId };
+                return Task.FromResult(new Response() { CompanyId = companyId });
             }
         }
     }

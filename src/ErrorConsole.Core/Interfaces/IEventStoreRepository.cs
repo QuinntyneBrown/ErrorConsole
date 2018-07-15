@@ -3,8 +3,6 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ErrorConsole.Core.Interfaces
 {
@@ -12,8 +10,12 @@ namespace ErrorConsole.Core.Interfaces
     {
         void Store<TEvent>(Guid aggregateId, TEvent @event)
             where TEvent : INotification;
-        IList<StoredEvent> All(Guid aggregateId);
+        IList<StoredEvent> All(Guid aggregateId);        
         IList<StoredEvent> GetAllByEvent<T>();
+        T[] GetAllEventsOfType<T>();
+        object[] GetAllEvents(Guid aggregateId);
         IQueryable<StoredEvent> GetAllByEventProperyValue<T>(string property, string value);
+
+        T GetEventByEventProperyValue<T>(string property, string value);
     }
 }

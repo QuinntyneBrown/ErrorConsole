@@ -25,18 +25,17 @@ namespace ErrorConsole.API.Features.Companies
 
             public Handler(IEventStoreRepository repository) => _repository = repository;
 
-            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 if (RandomNumberFactory.Create() > 14) throw new Exception();
                 
-                _repository.Store(request.Company.CompanyId, new CompanyChangedEvent()
+                _repository.Store(request.Company.CompanyId, new CompanyChanged()
                 {
                     CompanyId = request.Company.CompanyId,
                     Name = request.Company.Name
                 });
 
-                return new Response() { CompanyId = request.Company.CompanyId };
-                
+                return Task.FromResult(new Response() { CompanyId = request.Company.CompanyId });                
             }
         }
     }

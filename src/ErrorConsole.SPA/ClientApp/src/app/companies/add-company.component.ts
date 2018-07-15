@@ -48,7 +48,7 @@ export class AddCompanyComponent {
     const company = new Company();
     company.companyId = this.companyId;
     company.name = this.form.value.name;
-    this._companyService.save({ company })
+    this._companyService.create({ company })
       .pipe(
         map(x => company.companyId = x.companyId),
         tap(x => this._overlay.close(company)),

@@ -1,15 +1,15 @@
+using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
 using System;
-//https://www.youtube.com/watch?v=0RGuoRRHWf8
 
 namespace ErrorConsole.Core.Models
 {
-    public class Company
+    public class Company: Aggregate
     {
         public Guid CompanyId { get; set; }           
 		public string Name { get; set; }
         public bool IsDeleted { get; set; }   
-        public static Company Create(Guid id, object[] events)
+        public static Company Load(Guid id, object[] events)
         {
             Company company = new Company() {
                 CompanyId = id
@@ -19,15 +19,15 @@ namespace ErrorConsole.Core.Models
             {
                 switch (@event)
                 {
-                    case CompanyCreatedEvent data:
+                    case CompanyCreated data:
                         company.Name = data.Name;
                         break;
 
-                    case CompanyChangedEvent data:
+                    case CompanyChanged data:
                         company.Name = data.Name;
                         break;
 
-                    case CompanyRemovedEvent data:
+                    case CompanyRemoved data:
                         company.IsDeleted = true;
                         break;
                 }

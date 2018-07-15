@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Newtonsoft.Json;
 using ErrorConsole.Core.DomainEvents;
+using System.Threading;
 
 namespace ErrorConsole.API
 {
@@ -27,9 +28,10 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
+                var repository = new EventStoreRepository(context);
 
-                if (context.DomainEvents
-                    .Where(x => x.AggregateId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
+                if (context.StoredEvents
+                    .Where(x => x.StreamId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
                     .FirstOrDefault() == null)
                 {
                     var userId = new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3");
@@ -41,21 +43,15 @@ namespace ErrorConsole.API
 
                     user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
 
-                    context.DomainEvents.Add(new DomainEvent()
+                    var userCreatedEvent = new UserCreatedEvent()
                     {
-                        Data = JsonConvert.SerializeObject(new UserCreatedEvent()
-                        {
-                            UserId = userId,
-                            Username = "quinntynebrown@gmail.com",
-                            Salt = user.Salt,
-                            Password = user.Password
+                        UserId = userId,
+                        Username = "quinntynebrown@gmail.com",
+                        Salt = user.Salt,
+                        Password = user.Password
+                    };
 
-                        }),
-                        AggregateId = userId,
-                        Type = nameof(UserCreatedEvent),
-                        DotNetType = $"{typeof(UserCreatedEvent).AssemblyQualifiedName}",
-                        CreatedOn = DateTime.UtcNow
-                    });
+                    repository.Store(userId, userCreatedEvent);
                 }
 
                 context.SaveChanges();
@@ -68,28 +64,48 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                if (context.Companies.FirstOrDefault(x => x.Name == "Nike") == null)
+                var repository = new EventStoreRepository(context);
+
+                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Ralph").FirstOrDefault() == null)
                 {
-                    var nike = new Company()
+                    var aggregateId = Guid.NewGuid();
+                    repository.Store<CompanyCreatedEvent>(aggregateId, new CompanyCreatedEvent()
                     {
-                        Name = "Nike"
-                    };
-
-                    var ralph = new Company()
-                    {
-                        Name = "Ralph Lauren"
-                    };
-
-                    var kate = new Company()
-                    {
-                        Name = "Kate Spade"
-                    };
-
-
-                    context.Companies.AddRange(new[] { nike, ralph, kate });
+                        CompanyId = aggregateId,
+                        Name = "Ralph"
+                    });
                 }
 
-                context.SaveChanges();
+                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Kate Spade").FirstOrDefault() == null)
+                {
+                    var aggregateId = Guid.NewGuid();
+                    repository.Store(aggregateId, new CompanyCreatedEvent()
+                    {
+                        CompanyId = aggregateId,
+                        Name = "Kate Spade"
+                    });
+                }
+
+                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Nike").FirstOrDefault() == null)
+                {
+                    var aggregateId = Guid.NewGuid();
+                    repository.Store(aggregateId, new CompanyCreatedEvent()
+                    {
+                        CompanyId = aggregateId,
+                        Name = "Nike"
+                    });
+                }
+
+                if (repository.GetAllByEventProperyValue<CompanyCreatedEvent>("Name", "Nike").FirstOrDefault() == null)
+                {
+                    var aggregateId = Guid.NewGuid();
+                    repository.Store(aggregateId, new CompanyCreatedEvent()
+                    {
+                        CompanyId = aggregateId,
+                        Name = "Nike"
+                    });
+                }
+
             }
         }
     }

@@ -11,6 +11,7 @@ namespace ErrorConsole.Infrastructure.Extensions
                                                string connectionString)
         {
             services.AddScoped<IAppDbContext, AppDbContext>();
+            services.AddScoped<IEventStoreRepository, EventStoreRepository>();
 
             return services.AddDbContext<AppDbContext>(options 
                 => options.UseSqlServer(connectionString, b => b.MigrationsAssembly("ErrorConsole.Infrastructure")));          

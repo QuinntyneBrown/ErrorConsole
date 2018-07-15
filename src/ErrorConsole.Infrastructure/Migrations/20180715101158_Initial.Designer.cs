@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ErrorConsole.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180714222542_AggregateId")]
-    partial class AggregateId
+    [Migration("20180715101158_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,24 +21,10 @@ namespace ErrorConsole.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ErrorConsole.Core.Models.Company", b =>
+            modelBuilder.Entity("ErrorConsole.Core.Models.StoredEvent", b =>
                 {
-                    b.Property<Guid>("CompanyId")
+                    b.Property<Guid>("StoredEventId")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("CompanyId");
-
-                    b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("ErrorConsole.Core.Models.DomainEvent", b =>
-                {
-                    b.Property<Guid>("DomainEventId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("AggregateId");
 
                     b.Property<DateTime>("CreatedOn");
 
@@ -46,11 +32,15 @@ namespace ErrorConsole.Infrastructure.Migrations
 
                     b.Property<string>("DotNetType");
 
+                    b.Property<Guid>("StreamId");
+
                     b.Property<string>("Type");
 
-                    b.HasKey("DomainEventId");
+                    b.Property<int>("Version");
 
-                    b.ToTable("DomainEvents");
+                    b.HasKey("StoredEventId");
+
+                    b.ToTable("StoredEvents");
                 });
 #pragma warning restore 612, 618
         }

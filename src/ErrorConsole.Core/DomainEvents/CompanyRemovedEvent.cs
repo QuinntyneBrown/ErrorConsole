@@ -1,8 +1,10 @@
+using MediatR;
+using System;
+
 namespace ErrorConsole.Core.DomainEvents
 {
-    public class CompanyRemovedEvent
+    public class CompanyRemovedEvent: INotification
     {
-        public int CompanyRemovedEventId { get; set; }           
-		public string Name { get; set; }        
+        public Guid CompanyId { get; set; }
     }
 }

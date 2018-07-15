@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using ErrorConsole.Core.Interfaces;
 using FluentValidation;
+using ErrorConsole.Core.Models;
+using System;
+using System.Linq;
 
 namespace ErrorConsole.API.Features.Companies
 {
@@ -12,12 +15,12 @@ namespace ErrorConsole.API.Features.Companies
         {
             public Validator()
             {
-                RuleFor(request => request.CompanyId).NotEqual(0);
+                RuleFor(request => request.CompanyId).NotEqual(default(Guid));
             }
         }
 
         public class Request : IRequest<Response> {
-            public int CompanyId { get; set; }
+            public Guid CompanyId { get; set; }
         }
 
         public class Response
@@ -27,15 +30,19 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IAppDbContext _context { get; set; }
+            public IEventStoreRepository _repository { get; set; }
             
-			public Handler(IAppDbContext context) => _context = context;
+			public Handler(IEventStoreRepository repository) => _repository = repository;
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
-                => new Response()
+            {
+                var company = Company.Create(request.CompanyId, _repository.All(request.CompanyId).ToArray());
+
+                return new Response()
                 {
-                    Company = CompanyApiModel.FromCompany(await _context.Companies.FindAsync(request.CompanyId))
+                    Company = CompanyApiModel.FromCompany(company)
                 };
+            }
         }
     }
 }

@@ -1,8 +1,9 @@
+using MediatR;
 using System;
 
 namespace ErrorConsole.Core.DomainEvents
 {
-    public class UserCreatedEvent
+    public class UserCreatedEvent: INotification
     {
         public Guid UserId { get; set; }
         public string Username { get; set; }

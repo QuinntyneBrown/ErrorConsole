@@ -39,31 +39,29 @@ namespace ErrorConsole.API.Features.Users
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            private readonly IAppDbContext _context;
+            private readonly IEventStoreRepository _repository;
             private readonly IPasswordHasher _passwordHasher;
             private readonly ISecurityTokenFactory _securityTokenFactory;
 
             public Handler(
-                IAppDbContext context, 
+                IEventStoreRepository repository, 
                 ISecurityTokenFactory securityTokenFactory, 
                 IPasswordHasher passwordHasher)
             {
-                _context = context;
+                _repository = repository;
                 _securityTokenFactory = securityTokenFactory;
                 _passwordHasher = passwordHasher;
             }
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
-            {
+            {                
+                var domainEvent = _repository.GetAllByEventProperyValue<UserCreatedEvent>("Username", request.Username).Single();
 
-                var userId = _context.DomainEvents.FromSql($"SELECT * FROM DomainEvents WHERE JSON_VALUE([Data],'$.Username')={request.Username} AND DotNetType ={typeof(UserCreatedEvent).AssemblyQualifiedName}")
-                    .Select(x => JsonConvert.DeserializeObject<UserCreatedEvent>(x.Data).UserId)
-                    .Single();
+                var userId = JsonConvert.DeserializeObject<UserCreatedEvent>(domainEvent.Data).UserId;
                 
-                var events = await _context.DomainEvents.Where(x
-                    => x.AggregateId == userId)
+                var events = _repository.All(userId)
                     .Select(x => JsonConvert.DeserializeObject(x.Data, Type.GetType(x.DotNetType)))
-                    .ToArrayAsync();
+                    .ToArray();
 
                 var user = User.Create(userId, events);
 

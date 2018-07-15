@@ -1,21 +1,24 @@
-using ErrorConsole.Core.Common;
-using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
+using ErrorConsole.Core.Models;
 using MediatR;
-using System;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
+using ErrorConsole.Core.Common;
+using System;
+using ErrorConsole.Core.DomainEvents;
+using Newtonsoft.Json;
 
 namespace ErrorConsole.API.Features.Companies
 {
-    public class MaybeSaveCompanyCommand
+    public class MaybeCreateCompanyCommand
     {
-        public class Request : IRequest<Response> {
+        public class Request : IRequest<Response>
+        {
             public CompanyApiModel Company { get; set; }
         }
 
         public class Response
-        {			
+        {
             public Guid CompanyId { get; set; }
         }
 
@@ -28,15 +31,16 @@ namespace ErrorConsole.API.Features.Companies
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 if (RandomNumberFactory.Create() > 14) throw new Exception();
-                
-                _repository.Store(request.Company.CompanyId, new CompanyChangedEvent()
+
+                var companyId = Guid.NewGuid();
+
+                _repository.Store(companyId, new CompanyCreatedEvent()
                 {
-                    CompanyId = request.Company.CompanyId,
+                    CompanyId = companyId,
                     Name = request.Company.Name
                 });
-
-                return new Response() { CompanyId = request.Company.CompanyId };
                 
+                return new Response() { CompanyId = companyId };
             }
         }
     }

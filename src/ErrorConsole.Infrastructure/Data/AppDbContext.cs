@@ -9,8 +9,7 @@ namespace ErrorConsole.Infrastructure.Data
         public AppDbContext(DbContextOptions options)
             :base(options) { }
 
-        public DbSet<DomainEvent> DomainEvents { get; set; }
-        public DbSet<Company> Companies { get; set; }        
+        public DbSet<StoredEvent> StoredEvents { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

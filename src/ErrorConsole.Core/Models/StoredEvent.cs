@@ -2,13 +2,14 @@
 
 namespace ErrorConsole.Core.Models
 {
-    public class DomainEvent
+    public class StoredEvent
     {
-        public Guid DomainEventId { get; set; }
-        public Guid AggregateId { get; set; }
+        public Guid StoredEventId { get; set; }
+        public Guid StreamId { get; set; }
         public string Type { get; set; }
         public string Data { get; set; }
         public string DotNetType { get; set; }
         public DateTime CreatedOn { get; set; }
+        public int Version { get; set; }
     }
 }

@@ -31,9 +31,9 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IEventStoreRepository _repository { get; set; }
+            public IEventStore _repository { get; set; }
             
-			public Handler(IEventStoreRepository repository) => _repository = repository;
+			public Handler(IEventStore repository) => _repository = repository;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {

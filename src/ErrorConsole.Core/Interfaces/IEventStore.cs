@@ -7,10 +7,11 @@ using System.Linq;
 
 namespace ErrorConsole.Core.Interfaces
 {
-    public interface IEventStoreRepository : IDisposable
+    public interface IEventStore : IDisposable
     {
         void Save(Guid aggregateId, AggregateRoot aggregateRoot);
-
+        INotification[] GetAllEventsForAggregate<T>()
+            where T : AggregateRoot;
         IList<StoredEvent> All(Guid aggregateId);        
         IList<StoredEvent> GetAllByEvent<T>();
         T[] GetAllEventsOfType<T>();

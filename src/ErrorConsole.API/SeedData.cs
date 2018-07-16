@@ -29,7 +29,7 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                var repository = new EventStoreRepository(context);
+                var repository = new EventStore(context);
 
                 if (context.StoredEvents
                     .Where(x => x.StreamId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
@@ -61,7 +61,7 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                var repository = new EventStoreRepository(context);
+                var repository = new EventStore(context);
 
                 if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Ralph").FirstOrDefault() == null)
                 {

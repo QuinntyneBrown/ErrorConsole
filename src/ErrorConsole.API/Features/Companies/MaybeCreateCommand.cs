@@ -1,12 +1,10 @@
+using ErrorConsole.Core.Common;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
-using System.Threading.Tasks;
-using System.Threading;
-using ErrorConsole.Core.Common;
 using System;
-using ErrorConsole.Core.DomainEvents;
-using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ErrorConsole.API.Features.Companies
 {
@@ -24,9 +22,9 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IEventStoreRepository _repository { get; set; }
+            public IEventStore _eventStore { get; set; }
 
-            public Handler(IEventStoreRepository repository) => _repository = repository;
+            public Handler(IEventStore repository) => _eventStore = repository;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
@@ -34,7 +32,7 @@ namespace ErrorConsole.API.Features.Companies
                 
                 var company = new Company(Guid.NewGuid(),request.Company.Name);
 
-                _repository.Save(company.CompanyId,company);
+                _eventStore.Save(company.CompanyId,company);
                 
                 return Task.FromResult(new Response() { CompanyId = company.CompanyId });
             }

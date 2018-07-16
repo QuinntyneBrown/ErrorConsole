@@ -24,9 +24,9 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            private readonly IEventStoreRepository _repository;
+            private readonly IEventStore _repository;
 
-            public Handler(IEventStoreRepository repository) => _repository = repository;
+            public Handler(IEventStore repository) => _repository = repository;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {                
@@ -37,7 +37,7 @@ namespace ErrorConsole.API.Features.Companies
                 foreach (var id in _repository.GetAllByEvent<CompanyCreated>().Select(x => x.StreamId)) {
                     var model = Company.Load(id, _repository.GetAllEvents(id));
 
-                    if(model.IsDeleted == false)
+                    if(model.Status == CompanyStatus.Active)
                         companies.Add(CompanyApiModel.FromCompany(model));
                 }
 

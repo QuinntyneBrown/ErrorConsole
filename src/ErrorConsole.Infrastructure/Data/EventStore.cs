@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace ErrorConsole.Infrastructure.Data
 {
-    public class EventStoreRepository : IEventStoreRepository
+    public class EventStore : IEventStore
     {
         private readonly IAppDbContext _context;
         private readonly IMediator _mediator;
 
-        public EventStoreRepository(IAppDbContext context, IMediator mediator = default(IMediator)) {
+        public EventStore(IAppDbContext context, IMediator mediator = default(IMediator)) {
             _context = context;
             _mediator = mediator;
         }
@@ -31,13 +31,13 @@ namespace ErrorConsole.Infrastructure.Data
 
         public IQueryable<StoredEvent> GetAllByEventProperyValue<T>(string property, string value)
         {
-            var propertyValue = new SqlParameter("property", value);
-            var dotNetType = new SqlParameter("dotNetType", typeof(T).AssemblyQualifiedName);
-            var sb = new StringBuilder();
+            var propertyParameter = new SqlParameter("property", value);
+            var dotNetTypeParameter = new SqlParameter("dotNetType", typeof(T).AssemblyQualifiedName);
+            var stringBuilder = new StringBuilder();
 
-            sb.Append($"SELECT * from StoredEvents WHERE JSON_VALUE([Data],'$.{property}')= @property AND DotNetType = @dotnetType");
+            stringBuilder.Append($"SELECT * from StoredEvents WHERE JSON_VALUE([Data],'$.{property}')= @property AND DotNetType = @dotnetType");
             
-            return _context.StoredEvents.FromSql(sb.ToString(),propertyValue, dotNetType);
+            return _context.StoredEvents.FromSql(stringBuilder.ToString(),propertyParameter, dotNetTypeParameter);
         }
 
         public void Dispose() => _context.Dispose();
@@ -53,7 +53,16 @@ namespace ErrorConsole.Infrastructure.Data
 
             return list.ToArray();
         }
- 
+
+        public INotification[] GetAllEventsForAggregate<T>()
+        {
+            var list = new List<INotification>();
+
+            foreach (var storedEvent in _context.StoredEvents.Where(x => x.Aggregate == aggregate))
+                list.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as INotification);
+
+            return list.ToArray();
+        }
 
         public T GetEventByEventProperyValue<T>(string property, string value)
         {
@@ -67,6 +76,7 @@ namespace ErrorConsole.Infrastructure.Data
                 _context.StoredEvents.Add(new StoredEvent()
                 {
                     StoredEventId = Guid.NewGuid(),
+                    Aggregate = aggregateRoot.GetType().Name,
                     Data = JsonConvert.SerializeObject(@event),
                     StreamId = aggregateId,
                     DotNetType = @event.GetType().AssemblyQualifiedName,

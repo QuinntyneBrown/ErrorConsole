@@ -1,5 +1,6 @@
 using ErrorConsole.Core.Extensions;
 using ErrorConsole.Core.Identity;
+using ErrorConsole.Core.Middleware;
 using ErrorConsole.Infrastructure.Extensions;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -36,6 +37,7 @@ namespace ErrorConsole.API
             app.UseAuthentication()            
                 .UseCors(CorsDefaults.Policy)            
                 .UseMvc()
+                .UseAppService()
                 .UseSwagger()
                 .UseSwaggerUI(options =>
                 {

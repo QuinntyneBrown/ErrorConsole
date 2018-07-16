@@ -39,12 +39,12 @@ namespace ErrorConsole.API.Features.Users
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            private readonly IEventStoreRepository _repository;
+            private readonly IEventStore _repository;
             private readonly IPasswordHasher _passwordHasher;
             private readonly ISecurityTokenFactory _securityTokenFactory;
 
             public Handler(
-                IEventStoreRepository repository, 
+                IEventStore repository, 
                 ISecurityTokenFactory securityTokenFactory, 
                 IPasswordHasher passwordHasher)
             {

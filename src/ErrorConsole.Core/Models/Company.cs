@@ -23,13 +23,13 @@ namespace ErrorConsole.Core.Models
 
         public Guid CompanyId { get; set; }           
 		public string Name { get; set; }
-        public bool IsDeleted { get; set; }
+        public CompanyStatus Status { get; set; } = CompanyStatus.Active;
         public void Apply(INotification @event)
         {
             switch (@event)
             {
                 case CompanyRemoved data:
-                    IsDeleted = false;
+                    Status = CompanyStatus.Deleted;
                     break;
 
                 case CompanyChanged data:

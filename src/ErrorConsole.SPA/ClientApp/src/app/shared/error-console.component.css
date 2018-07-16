@@ -4,3 +4,45 @@
   background-color:#fff;
   overflow:auto;
 }
+
+h2 {
+  margin:0;
+  padding:0;
+}
+
+p {
+  line-height:40px;
+  font-size:20px;
+  text-align:center;
+  vertical-align:middle;
+  margin:0;
+  padding:0;
+}
+
+span {
+  line-height:20px;
+  vertical-align:middle;
+}
+
+.error-console-chrome {
+  display: grid;
+  grid-template-columns: 1fr 80px 40px 40px;
+  padding: 10px 20px;
+  background-color: #EEE;
+  border-bottom:1px #999 solid;
+  height:40px;
+}
+
+.error-sub-console-chrome {
+  display: grid;
+  grid-auto-columns:40px;
+  padding: 10px 20px;
+  background-color: #EEE;
+  border-bottom: 1px #999 solid;
+  height: 40px;
+}
+
+.error-count {
+  display: grid;
+  grid-template-columns: 40px 40px;
+}

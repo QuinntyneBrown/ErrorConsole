@@ -17,6 +17,7 @@
 
     <app-error-console [errors$]="notificationService.errors$"
                        (close)="closeErrorConsole()"
+                       (clear)="clearNotifcations()"
                        *ngIf="isErrorConsoleOpen">
     </app-error-console>
 

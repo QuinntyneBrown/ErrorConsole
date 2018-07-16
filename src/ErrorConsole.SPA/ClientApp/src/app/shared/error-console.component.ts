@@ -20,4 +20,7 @@ export class ErrorConsoleComponent {
 
   @Output()
   public close: EventEmitter<any> = new EventEmitter();
+
+  @Output()
+  public clear: EventEmitter<any> = new EventEmitter();
 }

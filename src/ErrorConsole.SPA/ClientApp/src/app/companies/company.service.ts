@@ -16,7 +16,7 @@ export class CompanyService {
     return this._client.get<{ companies: Array<Company> }>(`${this._baseUrl}api/companies`)
       .pipe(
         map(x => x.companies),
-        retry(10)
+        retry(0)
       );
   }
 
@@ -34,7 +34,7 @@ export class CompanyService {
   public create(options: { company: Company }): Observable<{ companyId: number }> {
     return this._client
       .post<{ companyId: number }>(`${this._baseUrl}api/companies/create`, { company: options.company })
-      .pipe(retry(10));
+      .pipe(retry(0));
   }
 
   public update(options: { company: Company }): Observable<{ companyId: number }> {

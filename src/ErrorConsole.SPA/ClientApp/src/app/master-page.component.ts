@@ -32,6 +32,10 @@ export class MasterPageComponent {
     this.isErrorConsoleOpen = false;
   }
 
+  public clearNotifcations() {
+    this.notificationService.errors$.next([]);
+  }
+
   @HostBinding("class.error-console-is-opened")
   public isErrorConsoleOpen:boolean = null;
 }

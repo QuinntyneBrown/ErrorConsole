@@ -1,44 +1,55 @@
 using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
+using MediatR;
 using System;
 using System.Security.Cryptography;
 
 namespace ErrorConsole.Core.Models
 {
-    public class User: Aggregate
+    public class User: AggregateRoot
     {
-        public User(Guid userId) => UserId = userId;
-
-        public User()
-        {
-            Salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
+        public User(Guid userId, string username = null, byte[] salt= null, string password = null) {
+            Apply(new UserCreated()
             {
-                rng.GetBytes(Salt);
-            }
+                UserId = userId,
+                Username = username,
+                Password = password,
+                Salt = salt
+            });
         }
 
-        public static User Load(Guid userId, object[] events)
+        public User()
+            :this(Guid.NewGuid())
+        { }
+        
+        public static User Load(Guid userId, INotification[] events)
         {
-            var user = new User(userId);
+            var user = new User();
 
             foreach(var @event in events)
             {
-                switch (@event) {
-                    case UserCreated userCreatedEvent:
-                            user = new User()
-                            {
-                                Username = userCreatedEvent.Username,
-                                Salt = userCreatedEvent.Salt,
-                                Password = userCreatedEvent.Password
-                            };
-                        break;
-                }
+                user.Apply(@event);
             }
             
             return user;
         }
 
+
+
+        public void Apply(INotification @event)
+        {
+            switch (@event)
+            {
+                case UserCreated data:
+                    UserId = data.UserId;
+                    Username = data.Username;
+                    Salt = data.Salt;
+                    Password = data.Password;
+                    break;
+            }
+
+            RaiseDomainEvent(@event);
+        }
         public User Create(UserCreated @event)
         {
             return new User()

@@ -1,6 +1,7 @@
 using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
+using ErrorConsole.Core.Models;
 using MediatR;
 using System;
 using System.Threading;
@@ -28,12 +29,12 @@ namespace ErrorConsole.API.Features.Companies
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 if (RandomNumberFactory.Create() > 14) throw new Exception();
-                
-                _repository.Store(request.Company.CompanyId, new CompanyChanged()
-                {
-                    CompanyId = request.Company.CompanyId,
-                    Name = request.Company.Name
-                });
+
+                var company = Company.Load(request.Company.CompanyId, _repository.GetAllEvents(request.Company.CompanyId));
+
+                company.ChangeName(request.Company.Name);
+
+                _repository.Save(company.CompanyId, company);
 
                 return Task.FromResult(new Response() { CompanyId = request.Company.CompanyId });                
             }

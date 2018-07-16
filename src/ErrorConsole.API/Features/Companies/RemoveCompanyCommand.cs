@@ -1,5 +1,6 @@
 using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
+using ErrorConsole.Core.Models;
 using MediatR;
 using System;
 using System.Threading;
@@ -22,7 +23,11 @@ namespace ErrorConsole.API.Features.Companies
 
             public Task Handle(Request request, CancellationToken cancellationToken)
             {
-                _repository.Store(request.CompanyId, new CompanyRemoved(request.CompanyId));
+                var company = Company.Load(request.CompanyId, _repository.GetAllEvents(request.CompanyId));
+
+                company.Delete();
+                
+                _repository.Save(company.CompanyId,company);
 
                 return Task.CompletedTask;
             }

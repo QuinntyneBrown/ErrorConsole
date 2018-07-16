@@ -11,6 +11,7 @@ using System;
 using Newtonsoft.Json;
 using ErrorConsole.Core.DomainEvents;
 using System.Threading;
+using System.Security.Cryptography;
 
 namespace ErrorConsole.API
 {
@@ -34,24 +35,20 @@ namespace ErrorConsole.API
                     .Where(x => x.StreamId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
                     .FirstOrDefault() == null)
                 {
-                    var userId = new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3");
 
-                    var user = new User()
+                    var salt = new byte[128 / 8];
+                    using (var rng = RandomNumberGenerator.Create())
                     {
-                        Username = "quinntynebrown@gmail.com"
-                    };
-
-                    user.Password = new PasswordHasher().HashPassword(user.Salt, "P@ssw0rd");
-
-                    var userCreatedEvent = new UserCreated()
-                    {
-                        UserId = userId,
-                        Username = "quinntynebrown@gmail.com",
-                        Salt = user.Salt,
-                        Password = user.Password
-                    };
-
-                    repository.Store(userId, userCreatedEvent);
+                        rng.GetBytes(salt);
+                    }
+                    
+                    var user = new User(new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"),
+                        "quinntynebrown@gmail.com",
+                        salt,
+                        new PasswordHasher().HashPassword(salt, "P@ssw0rd")
+                        );
+                    
+                    repository.Save(user.UserId, user);
                 }
 
                 context.SaveChanges();
@@ -69,42 +66,21 @@ namespace ErrorConsole.API
                 if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Ralph").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store<CompanyCreated>(aggregateId, new CompanyCreated()
-                    {
-                        CompanyId = aggregateId,
-                        Name = "Ralph"
-                    });
+                    repository.Save(aggregateId, new Company(aggregateId, "Ralph"));                    
                 }
 
                 if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Kate Spade").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store(aggregateId, new CompanyCreated()
-                    {
-                        CompanyId = aggregateId,
-                        Name = "Kate Spade"
-                    });
+                    repository.Save(aggregateId, new Company(aggregateId, "Kate Spade"));
                 }
 
                 if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
                 {
                     var aggregateId = Guid.NewGuid();
-                    repository.Store(aggregateId, new CompanyCreated()
-                    {
-                        CompanyId = aggregateId,
-                        Name = "Nike"
-                    });
+                    repository.Save(aggregateId, new Company(aggregateId, "Nike"));
                 }
-
-                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
-                {
-                    var aggregateId = Guid.NewGuid();
-                    repository.Store(aggregateId, new CompanyCreated()
-                    {
-                        CompanyId = aggregateId,
-                        Name = "Nike"
-                    });
-                }
+                
 
             }
         }

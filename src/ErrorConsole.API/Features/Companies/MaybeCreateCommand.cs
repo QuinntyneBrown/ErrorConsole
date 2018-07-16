@@ -31,16 +31,12 @@ namespace ErrorConsole.API.Features.Companies
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 if (RandomNumberFactory.Create() > 5) throw new Exception();
-
-                var companyId = Guid.NewGuid();
-
-                _repository.Store(companyId, new CompanyCreated()
-                {
-                    CompanyId = companyId,
-                    Name = request.Company.Name
-                });
                 
-                return Task.FromResult(new Response() { CompanyId = companyId });
+                var company = new Company(Guid.NewGuid(),request.Company.Name);
+
+                _repository.Save(company.CompanyId,company);
+                
+                return Task.FromResult(new Response() { CompanyId = company.CompanyId });
             }
         }
     }

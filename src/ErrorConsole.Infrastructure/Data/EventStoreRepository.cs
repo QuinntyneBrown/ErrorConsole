@@ -1,4 +1,5 @@
-﻿using ErrorConsole.Core.Interfaces;
+﻿using ErrorConsole.Core.Common;
+using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -41,34 +42,44 @@ namespace ErrorConsole.Infrastructure.Data
 
         public void Dispose() => _context.Dispose();
 
-        public void Store<TEvent>(Guid aggregateId, TEvent @event)
-            where TEvent : INotification
-        {
-            _context.StoredEvents.Add(new StoredEvent()
-            {
-                StoredEventId = Guid.NewGuid(),
-                Data = JsonConvert.SerializeObject(@event),
-                StreamId = aggregateId,
-                DotNetType = typeof(TEvent).AssemblyQualifiedName,
-                Type = typeof(TEvent).Name,
-                CreatedOn = DateTime.UtcNow
-            });
-
-            if(_mediator != null) _mediator.Publish(@event).GetAwaiter().GetResult();
-
-            _context.SaveChanges();
-        }
-
         public T[] GetAllEventsOfType<T>()
             => GetAllByEvent<T>().Select(x => JsonConvert.DeserializeObject(x.Data, typeof(T))).ToArray() as T[];
 
-        public object[] GetAllEvents(Guid aggregateId)
-            => All(aggregateId).Select(x => JsonConvert.DeserializeObject(x.Data, Type.GetType(x.DotNetType))).ToArray();
+        public INotification[] GetAllEvents(Guid aggregateId) {
+            var list = new List<INotification>();
+
+            foreach(var storedEvent in All(aggregateId))
+                list.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as INotification);
+
+            return list.ToArray();
+        }
+ 
 
         public T GetEventByEventProperyValue<T>(string property, string value)
         {
             var domainEvent = GetAllByEventProperyValue<T>(property, value).Single();
             return JsonConvert.DeserializeObject<T>(domainEvent.Data);
+        }
+
+        public void Save(Guid aggregateId, AggregateRoot aggregateRoot)
+        {
+            foreach (var @event in aggregateRoot.DomainEvents) {
+                _context.StoredEvents.Add(new StoredEvent()
+                {
+                    StoredEventId = Guid.NewGuid(),
+                    Data = JsonConvert.SerializeObject(@event),
+                    StreamId = aggregateId,
+                    DotNetType = @event.GetType().AssemblyQualifiedName,
+                    Type = @event.GetType().Name,
+                    CreatedOn = DateTime.UtcNow
+                });
+
+                if (_mediator != null) _mediator.Publish(@event).GetAwaiter().GetResult();
+
+                _context.SaveChanges();
+            }
+
+            aggregateRoot.ClearEvents();
         }
     }
 }

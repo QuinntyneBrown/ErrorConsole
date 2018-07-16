@@ -30,12 +30,13 @@ h1 {
 }
 
 .router-outlet-container {
-  height: calc(100vh - 94px);
+  padding:20px;
+  height: calc(100vh - 134px);
   overflow-y:auto;
 }
 
 :host(.error-console-is-opened) .router-outlet-container  {
-  height: calc(100vh - 364px);
+  height: calc(100vh - 404px);
 }
 
 .mat-expansion-panel-spacing {

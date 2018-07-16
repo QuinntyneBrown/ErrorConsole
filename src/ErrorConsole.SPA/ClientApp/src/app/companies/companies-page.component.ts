@@ -20,16 +20,24 @@ export class CompaniesPageComponent extends BaseComponent {
     super(_notificationService);
   }
   
-  ngOnInit() {
+  public ngOnInit() {
     this._companyService
       .get()
       .pipe(map(x => this.companies$.next(x)),takeUntil(this.onDestroy))
       .subscribe(null, this.handleError);
+
+    super.ngOnInit();
   }
+
+  public recover() {
+    this._companyService
+      .get()
+      .pipe(map(x => this.companies$.next(x)), takeUntil(this.onDestroy))
+      .subscribe(null, this.handleError);
+  }
+
   public companies$: BehaviorSubject<Company[]> = new BehaviorSubject([]);
-
-  public onDestroy: Subject<void> = new Subject<void>();
-
+  
   ngOnDestroy() {
     this.onDestroy.next();	
   }
@@ -43,7 +51,7 @@ export class CompaniesPageComponent extends BaseComponent {
     this._addCompany
       .create()
       .pipe(tap(x => {
-        this.companies$.next([...this.companies$.value, x]);
+        if(x) this.companies$.next([...this.companies$.value, x]);
       }))
       .subscribe();
   }

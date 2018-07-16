@@ -14,14 +14,14 @@ export class MasterPageComponent {
   ngOnInit() {
     this.notificationService.errors$
       .pipe(tap(x => {
-        if (this.isErrorConsoleOpen === null) {
+        if (x.length < 1) {
           this.isErrorConsoleOpen = false;
         }
         else {
           this.isErrorConsoleOpen = true;
         }
       }))
-      .subscribe();
+      .subscribe();    
   }
   
   public signOut() {

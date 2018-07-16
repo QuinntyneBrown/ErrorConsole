@@ -1,15 +1,5 @@
 <section class="mat-typography error-console-chrome">
-  <h2>Console</h2>
-
-  <span class="error-count">
-    <button mat-mini-fab>
-      <mat-icon>close</mat-icon>
-    </button>
-    <p>{{ (errors$ | async).length }}</p>
-  </span>
-  <button mat-icon-button>
-    <mat-icon>more_vert</mat-icon>
-  </button>
+  <h2>Error List</h2>
 
   <button mat-icon-button (click)="close.emit()">
     <mat-icon>close</mat-icon>
@@ -17,9 +7,12 @@
 </section>
 
 <section class="mat-typography error-sub-console-chrome">
-  <button mat-mini-fab (click)="clear.emit()">
-    <mat-icon>sync</mat-icon>
-  </button>
+  <span class="error-count">
+    <button mat-mini-fab (click)="clear.emit()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <p>{{ (errors$ | async).length }}</p>
+  </span>
 </section>
 
   <mat-list role="list">

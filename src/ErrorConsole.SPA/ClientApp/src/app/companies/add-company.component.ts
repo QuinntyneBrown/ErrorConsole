@@ -15,7 +15,9 @@ import { map, switchMap, tap, takeUntil } from "rxjs/operators";
 export class AddCompanyComponent { 
   constructor(
     private _companyService: CompanyService,
-    private _overlay: OverlayRefWrapper) { }
+    private _overlay: OverlayRefWrapper) {
+    this.handleError = this.handleError.bind(this);
+  }
 
   ngOnInit() {
     if (this.companyId)
@@ -54,7 +56,13 @@ export class AddCompanyComponent {
         tap(x => this._overlay.close(company)),
         takeUntil(this.onDestroy)
       )
-      .subscribe();
+      .subscribe(null,this.handleError);
+  }
+
+  public errorMessage: string;
+  
+  public handleError(e) {
+    this.errorMessage = e.message; 
   }
 
   public form: FormGroup = new FormGroup({

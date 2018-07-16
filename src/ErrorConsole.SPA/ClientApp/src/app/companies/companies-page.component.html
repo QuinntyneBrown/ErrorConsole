@@ -6,7 +6,7 @@
   Refresh
 </button>
 
-<button mat-button (click)="openAddCompanyOverlay()">
+<button mat-button (click)="openAddCompanyOverlay()" [disabled]="hasErrors">
   Add Company
 </button>
 

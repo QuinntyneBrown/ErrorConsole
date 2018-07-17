@@ -14,6 +14,7 @@ namespace ErrorConsole.Infrastructure.Migrations
                     StoredEventId = table.Column<Guid>(nullable: false),
                     StreamId = table.Column<Guid>(nullable: false),
                     Type = table.Column<string>(nullable: true),
+                    Aggregate = table.Column<string>(nullable: true),
                     Data = table.Column<string>(nullable: true),
                     DotNetType = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),

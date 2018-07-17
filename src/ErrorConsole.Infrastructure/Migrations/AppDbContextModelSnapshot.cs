@@ -24,6 +24,8 @@ namespace ErrorConsole.Infrastructure.Migrations
                     b.Property<Guid>("StoredEventId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Aggregate");
+
                     b.Property<DateTime>("CreatedOn");
 
                     b.Property<string>("Data");

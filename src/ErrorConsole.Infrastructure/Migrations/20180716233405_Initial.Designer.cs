@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ErrorConsole.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180715101158_Initial")]
+    [Migration("20180716233405_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,8 @@ namespace ErrorConsole.Infrastructure.Migrations
                 {
                     b.Property<Guid>("StoredEventId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Aggregate");
 
                     b.Property<DateTime>("CreatedOn");
 

@@ -1,15 +1,11 @@
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using ErrorConsole.Core.Common;
 using ErrorConsole.Core.Interfaces;
+using ErrorConsole.Core.Models;
+using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ErrorConsole.Core.Common;
-using ErrorConsole.Core.DomainEvents;
-using ErrorConsole.Core.Models;
-using Newtonsoft.Json;
 
 namespace ErrorConsole.API.Features.Companies
 {
@@ -34,8 +30,8 @@ namespace ErrorConsole.API.Features.Companies
 
                 List<CompanyApiModel> companies = new List<CompanyApiModel>();
 
-                foreach (var id in _repository.GetAllByEvent<CompanyCreated>().Select(x => x.StreamId)) {
-                    var model = Company.Load(id, _repository.GetAllEvents(id));
+                foreach (var result in _repository.GetAllEventsForAggregate<Company>()) {                    
+                    var model = Company.Load(result.Key, result.Value);
 
                     if(model.Status == CompanyStatus.Active)
                         companies.Add(CompanyApiModel.FromCompany(model));

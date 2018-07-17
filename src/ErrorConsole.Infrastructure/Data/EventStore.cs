@@ -54,14 +54,21 @@ namespace ErrorConsole.Infrastructure.Data
             return list.ToArray();
         }
 
-        public INotification[] GetAllEventsForAggregate<T>()
+        public IDictionary<Guid, INotification[]> GetAllEventsForAggregate<T>()
+            where T: AggregateRoot
         {
-            var list = new List<INotification>();
+            var result = new Dictionary<Guid, INotification[]>();
 
-            foreach (var storedEvent in _context.StoredEvents.Where(x => x.Aggregate == aggregate))
-                list.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as INotification);
+            foreach (var grouping in _context.StoredEvents.Where(x => x.Aggregate == typeof(T).Name).GroupBy(x => x.StreamId))
+            {
+                var events = new List<INotification>();
+                foreach(var storedEvent in grouping)
+                    events.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as INotification);
+                
+                result.Add(grouping.Key, events.ToArray());
+            }
 
-            return list.ToArray();
+            return result;
         }
 
         public T GetEventByEventProperyValue<T>(string property, string value)

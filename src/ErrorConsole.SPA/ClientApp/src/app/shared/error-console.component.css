@@ -47,24 +47,3 @@ span {
   grid-template-columns: 40px 40px;
 }
 
-.mat-mini-fab {
-  width: 12px;
-  height: 12px;
-  font-size: 8px;
-  font-weight: 400;
-}
-
-::ng-deep .mat-mini-fab .mat-button-wrapper {
-  padding: 0 !important;
-  line-height:12px;
-}
-
-.mat-icon {
-  height: 12px;
-  width: 12px;
-}
-
-.material-icons {
-  font-size:6px;
-}
-

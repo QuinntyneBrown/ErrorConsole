@@ -39,25 +39,25 @@ namespace ErrorConsole.API.Features.Users
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            private readonly IEventStore _repository;
+            private readonly IEventStore _eventStore;
             private readonly IPasswordHasher _passwordHasher;
             private readonly ISecurityTokenFactory _securityTokenFactory;
 
             public Handler(
-                IEventStore repository, 
+                IEventStore eventStore, 
                 ISecurityTokenFactory securityTokenFactory, 
                 IPasswordHasher passwordHasher)
             {
-                _repository = repository;
+                _eventStore = eventStore;
                 _securityTokenFactory = securityTokenFactory;
                 _passwordHasher = passwordHasher;
             }
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {                                
-                var userId = _repository.GetEventByEventProperyValue<UserCreated>("Username",request.Username).UserId;
+                var userId = _eventStore.GetEventByEventProperyValue<UserCreated>("Username",request.Username).UserId;
                 
-                var user = User.Load(userId, _repository.GetAllEvents(userId));
+                var user = _eventStore.Load<User>(userId);
 
                 if (user.Password != _passwordHasher.HashPassword(user.Salt, request.Password))
                     throw new System.Exception();

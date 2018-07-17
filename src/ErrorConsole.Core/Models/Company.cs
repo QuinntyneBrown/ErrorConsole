@@ -32,7 +32,7 @@ namespace ErrorConsole.Core.Models
                     Status = CompanyStatus.Deleted;
                     break;
 
-                case CompanyChanged data:
+                case CompanyNameChanged data:
                     Name = data.Name;
                     break;
 
@@ -45,27 +45,10 @@ namespace ErrorConsole.Core.Models
             RaiseDomainEvent(@event);
         }
 
-        public void ChangeName(string name) {
-            Apply(new CompanyChanged()
-            {
-                Name = name
-            });
-        }
+        public void ChangeName(string name)
+            => Apply(new CompanyNameChanged(name));
 
-        public void Delete()
-        {
-            Apply(new CompanyRemoved());
-        }
-        public static Company Load(Guid id, INotification[] events)
-        {
-            Company company = new Company() {
-                CompanyId = id
-            };
-
-            foreach (var @event in events)
-                company.Apply(@event);
-
-            return company;
-        }        
+        public void Delete() 
+            => Apply(new CompanyRemoved());        
     }
 }

@@ -31,17 +31,15 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IEventStore _repository { get; set; }
+            public IEventStore _eventStore { get; set; }
             
-			public Handler(IEventStore repository) => _repository = repository;
+			public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
-            {
-                var company = Company.Load(request.CompanyId, _repository.GetAllEvents(request.CompanyId));
-
+            {                
                 return Task.FromResult(new Response()
                 {
-                    Company = CompanyApiModel.FromCompany(company)
+                    Company = CompanyApiModel.FromCompany(_eventStore.Load<Company>(request.CompanyId))
                 });
             }
         }

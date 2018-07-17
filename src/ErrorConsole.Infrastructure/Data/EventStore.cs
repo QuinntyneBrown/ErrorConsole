@@ -98,5 +98,16 @@ namespace ErrorConsole.Infrastructure.Data
 
             aggregateRoot.ClearEvents();
         }
+
+        public T Load<T>(Guid id)
+            where T : AggregateRoot
+        {
+            var aggregate = Activator.CreateInstance<Company>();
+
+            foreach (var @event in GetAllEvents(id))
+                aggregate.Apply(@event);
+
+            return aggregate as T;
+        }
     }
 }

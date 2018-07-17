@@ -20,9 +20,9 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            private readonly IEventStore _repository;
+            private readonly IEventStore _eventStore;
 
-            public Handler(IEventStore repository) => _repository = repository;
+            public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {                
@@ -30,8 +30,8 @@ namespace ErrorConsole.API.Features.Companies
 
                 List<CompanyApiModel> companies = new List<CompanyApiModel>();
 
-                foreach (var result in _repository.GetAllEventsForAggregate<Company>()) {                    
-                    var model = Company.Load(result.Key, result.Value);
+                foreach (var result in _eventStore.GetAllEventsForAggregate<Company>()) {                    
+                    var model = _eventStore.Load<Company>(result.Key);
 
                     if(model.Status == CompanyStatus.Active)
                         companies.Add(CompanyApiModel.FromCompany(model));

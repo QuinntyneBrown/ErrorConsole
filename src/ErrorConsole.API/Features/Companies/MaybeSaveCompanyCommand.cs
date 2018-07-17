@@ -22,19 +22,19 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IEventStore _repository { get; set; }
+            public IEventStore _eventStore { get; set; }
 
-            public Handler(IEventStore repository) => _repository = repository;
+            public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 if (RandomNumberFactory.Create() > 14) throw new Exception();
 
-                var company = Company.Load(request.Company.CompanyId, _repository.GetAllEvents(request.Company.CompanyId));
+                var company = _eventStore.Load<Company>(request.Company.CompanyId);
 
                 company.ChangeName(request.Company.Name);
 
-                _repository.Save(company.CompanyId, company);
+                _eventStore.Save(company.CompanyId, company);
 
                 return Task.FromResult(new Response() { CompanyId = request.Company.CompanyId });                
             }

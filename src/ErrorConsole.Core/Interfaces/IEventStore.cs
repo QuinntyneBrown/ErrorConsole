@@ -19,5 +19,8 @@ namespace ErrorConsole.Core.Interfaces
         IQueryable<StoredEvent> GetAllByEventProperyValue<T>(string property, string value);
 
         T GetEventByEventProperyValue<T>(string property, string value);
+
+        T Load<T>(Guid id)
+            where T : AggregateRoot;
     }
 }

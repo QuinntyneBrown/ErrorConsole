@@ -12,7 +12,7 @@ namespace ErrorConsole.API.Features.Companies
     public class MaybeSaveCompanyCommand
     {
         public class Request : IRequest<Response> {
-            public CompanyApiModel Company { get; set; }
+            public CompanyDto Company { get; set; }
         }
 
         public class Response
@@ -22,7 +22,7 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IEventStore _eventStore { get; set; }
+            private readonly IEventStore _eventStore;
 
             public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
@@ -34,7 +34,7 @@ namespace ErrorConsole.API.Features.Companies
 
                 company.ChangeName(request.Company.Name);
 
-                _eventStore.Save(company.CompanyId, company);
+                _eventStore.Save(company);
 
                 return Task.FromResult(new Response() { CompanyId = request.Company.CompanyId });                
             }

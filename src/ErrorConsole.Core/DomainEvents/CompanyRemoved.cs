@@ -2,5 +2,5 @@ using MediatR;
 
 namespace ErrorConsole.Core.DomainEvents
 {
-    public class CompanyRemoved: INotification { }
+    public class CompanyRemoved: DomainEvent { }
 }

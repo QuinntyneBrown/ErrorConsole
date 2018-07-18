@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ErrorConsole.Core.Middleware
 {
-    public static class EventRepositoryMiddleware
+    public static class EventeventStoreMiddleware
     {
         public static IApplicationBuilder UseAppService(this IApplicationBuilder app)
         {

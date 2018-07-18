@@ -5,9 +5,27 @@
   overflow:auto;
 }
 
+.close-button {
+  font-size:16px;
+  line-height:40px;
+  cursor:pointer;
+}
+
+.error-count-wrapper {
+  background-color: #ff4081;
+  border-radius:50%;
+  text-align:center;
+  cursor:pointer;
+}
+
+.error-count-wrapper mat-icon {
+  line-height:40px;
+  color:#fff;
+}
+
 h2 {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 p {

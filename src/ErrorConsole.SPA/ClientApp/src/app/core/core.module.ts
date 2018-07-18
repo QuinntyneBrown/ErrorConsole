@@ -15,6 +15,7 @@ import { RedirectService } from './redirect.service';
 import { HttpErrorResponseInterceptor } from './http-error-response.interceptor';
 import { OverlayRefProvider } from './overlay-ref-provider';
 import { OverlayRefWrapper } from './overlay-ref-wrapper';
+import { TimeoutInterceptor } from './timeout.interceptor';
 
 const providers = [
   {
@@ -27,7 +28,11 @@ const providers = [
     useClass: HttpErrorResponseInterceptor,
     multi: true
   },
-
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: TimeoutInterceptor,
+    multi: true
+  },
   AuthGuard,
   AuthService,
   NotificationService,

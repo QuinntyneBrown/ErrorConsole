@@ -7,12 +7,12 @@ import { Company } from "./company.model";
 import { map, switchMap, tap, takeUntil } from "rxjs/operators";
 
 @Component({
-  templateUrl: "./add-company.component.html",
-  styleUrls: ["./add-company.component.css"],
-  selector: "app-add-company",
-  host: { 'class':'mat-typography' }
+  templateUrl: "./add-company-overlay.component.html",
+  styleUrls: ["./add-company-overlay.component.css"],
+  selector: "app-add-company-overlay",
+  host: { 'class': 'mat-typography' }
 })
-export class AddCompanyComponent { 
+export class AddCompanyOverlayComponent {
   constructor(
     private _companyService: CompanyService,
     private _overlay: OverlayRefWrapper) {
@@ -35,11 +35,11 @@ export class AddCompanyComponent {
   public onDestroy: Subject<void> = new Subject<void>();
 
   ngOnDestroy() {
-    this.onDestroy.next();	
+    this.onDestroy.next();
   }
 
   public company$: BehaviorSubject<Company> = new BehaviorSubject(<Company>{});
-  
+
   public companyId: number;
 
   public handleCancelClick() {
@@ -54,20 +54,20 @@ export class AddCompanyComponent {
     const response$ = this.companyId
       ? this._companyService.update({ company })
       : this._companyService.create({ company });
-    
+
     response$
       .pipe(
         map(x => company.companyId = x.companyId),
         tap(x => this._overlay.close(company)),
         takeUntil(this.onDestroy)
       )
-      .subscribe(null,this.handleError);
+      .subscribe(null, this.handleError);
   }
 
   public errorMessage: string;
-  
+
   public handleError(e) {
-    this.errorMessage = e.message; 
+    this.errorMessage = e.message;
   }
 
   public form: FormGroup = new FormGroup({

@@ -1,4 +1,5 @@
 ﻿using ErrorConsole.Core.Common;
+using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Models;
 using MediatR;
 using System;
@@ -9,18 +10,20 @@ namespace ErrorConsole.Core.Interfaces
 {
     public interface IEventStore : IDisposable
     {
-        void Save(Guid aggregateId, AggregateRoot aggregateRoot);
-        IDictionary<Guid, INotification[]> GetAllEventsForAggregate<T>()
+        void Save(AggregateRoot aggregateRoot);
+        List<(Guid, DomainEvent[])> GetAllEventsForAggregate<T>()
             where T : AggregateRoot;
         IList<StoredEvent> All(Guid aggregateId);        
-        IList<StoredEvent> GetAllByEvent<T>();
-        T[] GetAllEventsOfType<T>();
-        INotification[] GetAllEvents(Guid aggregateId);
+
+        DomainEvent[] GetAllEventsByAggregateId(Guid aggregateId);
         IQueryable<StoredEvent> GetAllByEventProperyValue<T>(string property, string value);
 
         T GetEventByEventProperyValue<T>(string property, string value);
 
         T Load<T>(Guid id)
             where T : AggregateRoot;
+
+        TAggregateRoot[] Query<TAggregateRoot>()
+            where TAggregateRoot : AggregateRoot;
     }
 }

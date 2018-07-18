@@ -12,7 +12,7 @@ namespace ErrorConsole.API.Features.Companies
     {
         public class Request : IRequest<Response>
         {
-            public CompanyApiModel Company { get; set; }
+            public CompanyDto Company { get; set; }
         }
 
         public class Response
@@ -22,9 +22,9 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request, Response>
         {
-            public IEventStore _eventStore { get; set; }
+            private readonly IEventStore _eventStore;
 
-            public Handler(IEventStore repository) => _eventStore = repository;
+            public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
@@ -32,7 +32,7 @@ namespace ErrorConsole.API.Features.Companies
                 
                 var company = new Company(Guid.NewGuid(),request.Company.Name);
 
-                _eventStore.Save(company.CompanyId,company);
+                _eventStore.Save(company);
                 
                 return Task.FromResult(new Response() { CompanyId = company.CompanyId });
             }

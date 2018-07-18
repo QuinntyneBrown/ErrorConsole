@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { UsersModule } from './users/users.module';
 import { CompaniesModule } from './companies/companies.module';
 import { baseUrl } from './core/constants';
+import { ProductsModule } from './products/products.module';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { baseUrl } from './core/constants';
     AppRoutingModule,
     CompaniesModule,
     CoreModule,
+    ProductsModule,
     SharedModule,
     UsersModule
   ],

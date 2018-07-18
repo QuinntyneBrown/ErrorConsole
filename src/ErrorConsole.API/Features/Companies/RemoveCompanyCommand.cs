@@ -1,4 +1,3 @@
-using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
@@ -17,17 +16,17 @@ namespace ErrorConsole.API.Features.Companies
 
         public class Handler : IRequestHandler<Request>
         {
-            private IEventStore _repository;
+            private readonly IEventStore _eventStore;
             
-            public Handler(IEventStore repository) => _repository = repository;
+            public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
             public Task Handle(Request request, CancellationToken cancellationToken)
             {
-                var company = _repository.Load<Company>(request.CompanyId);
+                var company = _eventStore.Load<Company>(request.CompanyId);
 
                 company.Delete();
                 
-                _repository.Save(company.CompanyId,company);
+                _eventStore.Save(company);
 
                 return Task.CompletedTask;
             }

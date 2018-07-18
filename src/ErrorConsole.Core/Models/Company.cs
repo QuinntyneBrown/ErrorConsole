@@ -2,6 +2,7 @@ using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
 using MediatR;
 using System;
+using System.Collections.Generic;
 
 namespace ErrorConsole.Core.Models
 {
@@ -24,7 +25,8 @@ namespace ErrorConsole.Core.Models
         public Guid CompanyId { get; set; }           
 		public string Name { get; set; }
         public CompanyStatus Status { get; set; } = CompanyStatus.Active;
-        public void Apply(INotification @event)
+        public ICollection<Guid> ProductIds { get; set; }  = new HashSet<Guid>();
+        public override void Apply(DomainEvent @event)
         {
             switch (@event)
             {

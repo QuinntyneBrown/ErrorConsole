@@ -6,22 +6,24 @@ import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { CompanyService } from './company.service';
 import { CompaniesPageComponent } from './companies-page.component';
-import { AddCompanyComponent } from './add-company.component';
-import { AddCompany } from './add-company';
+
+import { DigitalAssetsModule } from '../digital-assets/digital-assets.module';
+import { AddCompanyOverlayComponent } from './add-company-overlay.component';
+import { AddCompanyOverlay } from './add-company-overlay';
 
 const declarations = [
   CompaniesPageComponent,
-  AddCompanyComponent
+  AddCompanyOverlayComponent
 ];
 
 const providers = [
   CompanyService,
-  AddCompany
+  AddCompanyOverlay
 ];
 
 const entryComponents = [
-  AddCompanyComponent
-]
+  AddCompanyOverlayComponent
+];
 
 @NgModule({
   declarations,
@@ -32,6 +34,7 @@ const entryComponents = [
     RouterModule,
 
     CoreModule,
+    DigitalAssetsModule,
     SharedModule
   ],
   providers,

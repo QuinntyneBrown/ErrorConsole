@@ -1,4 +1,5 @@
 ﻿using ErrorConsole.Core.Common;
+using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
@@ -9,8 +10,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using static Newtonsoft.Json.JsonConvert;
+using static System.Type;
 
 namespace ErrorConsole.Infrastructure.Data
 {
@@ -26,9 +27,6 @@ namespace ErrorConsole.Infrastructure.Data
         public IList<StoredEvent> All(Guid aggregateId)
             => _context.StoredEvents.Where(x => x.StreamId == aggregateId).ToList();
 
-        public IList<StoredEvent> GetAllByEvent<T>()
-            => _context.StoredEvents.FromSql($"SELECT * FROM StoredEvents WHERE DotNetType ={typeof(T).AssemblyQualifiedName}").ToList();
-
         public IQueryable<StoredEvent> GetAllByEventProperyValue<T>(string property, string value)
         {
             var propertyParameter = new SqlParameter("property", value);
@@ -42,72 +40,93 @@ namespace ErrorConsole.Infrastructure.Data
 
         public void Dispose() => _context.Dispose();
 
-        public T[] GetAllEventsOfType<T>()
-            => GetAllByEvent<T>().Select(x => JsonConvert.DeserializeObject(x.Data, typeof(T))).ToArray() as T[];
-
-        public INotification[] GetAllEvents(Guid aggregateId) {
-            var list = new List<INotification>();
+        public DomainEvent[] GetAllEventsByAggregateId(Guid aggregateId) {
+            var list = new List<DomainEvent>();
 
             foreach(var storedEvent in All(aggregateId))
-                list.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as INotification);
+                list.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
 
             return list.ToArray();
         }
 
-        public IDictionary<Guid, INotification[]> GetAllEventsForAggregate<T>()
-            where T: AggregateRoot
+        public List<(Guid, DomainEvent[])> GetAllEventsForAggregate<T>()
+            where T : AggregateRoot
         {
-            var result = new Dictionary<Guid, INotification[]>();
+            var result = new List<(Guid, DomainEvent[])>();
 
-            foreach (var grouping in _context.StoredEvents.Where(x => x.Aggregate == typeof(T).Name).GroupBy(x => x.StreamId))
+            foreach (var grouping in _context.StoredEvents
+                .Where(x => x.Aggregate == typeof(T).Name).GroupBy(x => x.StreamId))
             {
-                var events = new List<INotification>();
-                foreach(var storedEvent in grouping)
-                    events.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as INotification);
-                
-                result.Add(grouping.Key, events.ToArray());
+                var events = new List<DomainEvent>();
+                foreach (var storedEvent in grouping)
+                    events.Add(DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
+
+                result.Add((grouping.Key, events.ToArray()));
             }
 
             return result;
         }
 
         public T GetEventByEventProperyValue<T>(string property, string value)
-        {
-            var domainEvent = GetAllByEventProperyValue<T>(property, value).Single();
-            return JsonConvert.DeserializeObject<T>(domainEvent.Data);
-        }
+            => DeserializeObject<T>(GetAllByEventProperyValue<T>(property, value).Single().Data);
 
-        public void Save(Guid aggregateId, AggregateRoot aggregateRoot)
+        public void Save(AggregateRoot aggregateRoot)
         {
-            foreach (var @event in aggregateRoot.DomainEvents) {
-                _context.StoredEvents.Add(new StoredEvent()
+            try
+            {
+                foreach (var @event in aggregateRoot.DomainEvents)
                 {
-                    StoredEventId = Guid.NewGuid(),
-                    Aggregate = aggregateRoot.GetType().Name,
-                    Data = JsonConvert.SerializeObject(@event),
-                    StreamId = aggregateId,
-                    DotNetType = @event.GetType().AssemblyQualifiedName,
-                    Type = @event.GetType().Name,
-                    CreatedOn = DateTime.UtcNow
-                });
+                    var type = aggregateRoot.GetType();
 
-                if (_mediator != null) _mediator.Publish(@event).GetAwaiter().GetResult();
+                    _context.StoredEvents.Add(new StoredEvent()
+                    {
+                        StoredEventId = Guid.NewGuid(),
+                        Aggregate = aggregateRoot.GetType().Name,
+                        Data = SerializeObject(@event),
+                        StreamId = (Guid)type.GetProperty($"{type.Name}Id").GetValue(aggregateRoot, null),
+                        DotNetType = @event.GetType().AssemblyQualifiedName,
+                        Type = @event.GetType().Name,
+                        CreatedOn = DateTime.UtcNow
+                    });
 
-                _context.SaveChanges();
+                    if (_mediator != null) _mediator.Publish(@event).GetAwaiter().GetResult();
+
+                    _context.SaveChanges();
+                }
+
+                aggregateRoot.ClearEvents();
+            }catch(Exception e)
+            {
+                throw e;
             }
-
-            aggregateRoot.ClearEvents();
         }
 
         public T Load<T>(Guid id)
             where T : AggregateRoot
-        {
-            var aggregate = Activator.CreateInstance<Company>();
+            => Load<T>(id, GetAllEventsByAggregateId(id));
 
-            foreach (var @event in GetAllEvents(id))
+        public T Load<T>(Guid id, DomainEvent[] events)
+            where T : AggregateRoot
+        {
+            var aggregate = Activator.CreateInstance<T>();
+
+            foreach (var @event in events)
                 aggregate.Apply(@event);
 
-            return aggregate as T;
+            aggregate.ClearEvents();
+
+            return aggregate;
+        }
+
+        public TAggregateRoot[] Query<TAggregateRoot>()
+            where TAggregateRoot : AggregateRoot
+        {
+            var result = new List<TAggregateRoot>();
+
+            foreach (var ( aggregateId, events ) in GetAllEventsForAggregate<TAggregateRoot>())
+                result.Add(Load<TAggregateRoot>(aggregateId, events));
+
+            return result.ToArray();
         }
     }
 }

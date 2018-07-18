@@ -7,6 +7,8 @@
 
 <mat-sidenav-container class="app-content-container" autosize>
   <mat-sidenav #drawer class="sidenav" mode="side" (click)="drawer.close()">
+    <!--<button mat-button [routerLink]="/">Companies</button>
+    <button mat-button [routerLink]="/products">Products</button>-->
     <button mat-button (click)="signOut()">Sign Out</button>
   </mat-sidenav>
   <mat-sidenav-content>

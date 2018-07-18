@@ -1,16 +1,13 @@
-using ErrorConsole.Core.Models;
-using ErrorConsole.Core.Extensions;
+using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Identity;
+using ErrorConsole.Core.Models;
 using ErrorConsole.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore;
-using System;
-using Newtonsoft.Json;
-using ErrorConsole.Core.DomainEvents;
-using System.Threading;
 using System.Security.Cryptography;
 
 namespace ErrorConsole.API
@@ -20,7 +17,6 @@ namespace ErrorConsole.API
         public static void Seed(AppDbContext context)
         {
             UserConfiguration.Seed(context);
-
             CompanyConfiguration.Seed(context);
             context.SaveChanges();
         }
@@ -29,7 +25,7 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                var repository = new EventStore(context);
+                var eventStore = new EventStore(context);
 
                 if (context.StoredEvents
                     .Where(x => x.StreamId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
@@ -48,7 +44,7 @@ namespace ErrorConsole.API
                         new PasswordHasher().HashPassword(salt, "P@ssw0rd")
                         );
                     
-                    repository.Save(user.UserId, user);
+                    eventStore.Save(user);
                 }
 
                 context.SaveChanges();
@@ -61,27 +57,18 @@ namespace ErrorConsole.API
         {
             public static void Seed(AppDbContext context)
             {
-                var repository = new EventStore(context);
+                var eventStore = new EventStore(context);
 
-                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Ralph").FirstOrDefault() == null)
-                {
-                    var aggregateId = Guid.NewGuid();
-                    repository.Save(aggregateId, new Company(aggregateId, "Ralph"));                    
-                }
+                if (eventStore.GetAllByEventProperyValue<CompanyCreated>("Name", "Ralph").FirstOrDefault() == null)
+                    eventStore.Save(new Company(Guid.NewGuid(), "Ralph"));                    
 
-                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Kate Spade").FirstOrDefault() == null)
-                {
-                    var aggregateId = Guid.NewGuid();
-                    repository.Save(aggregateId, new Company(aggregateId, "Kate Spade"));
-                }
 
-                if (repository.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
-                {
-                    var aggregateId = Guid.NewGuid();
-                    repository.Save(aggregateId, new Company(aggregateId, "Nike"));
-                }
-                
+                if (eventStore.GetAllByEventProperyValue<CompanyCreated>("Name", "Kate Spade").FirstOrDefault() == null)
+                    eventStore.Save(new Company(Guid.NewGuid(), "Kate Spade"));
 
+
+                if (eventStore.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
+                    eventStore.Save(new Company(Guid.NewGuid(), "Nike"));
             }
         }
     }

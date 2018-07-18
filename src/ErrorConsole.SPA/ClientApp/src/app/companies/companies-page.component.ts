@@ -5,7 +5,8 @@ import { BaseComponent } from "../core/base.component";
 import { NotificationService } from "../core/notification.service";
 import { Company } from "./company.model";
 import { CompanyService } from "./company.service";
-import { AddCompany } from "./add-company";
+import { AddCompanyOverlay } from "./add-company-overlay";
+
 
 @Component({
   templateUrl: "./companies-page.component.html",
@@ -14,7 +15,7 @@ import { AddCompany } from "./add-company";
 })
 export class CompaniesPageComponent extends BaseComponent { 
   constructor(
-    private _addCompany: AddCompany,
+    private _addCompanyOverlay: AddCompanyOverlay,
     private _companyService: CompanyService,
     _notificationService: NotificationService) {
     super(_notificationService);
@@ -48,7 +49,7 @@ export class CompaniesPageComponent extends BaseComponent {
   }
 
   public openAddCompanyOverlay() {
-    this._addCompany
+    this._addCompanyOverlay
       .create()
       .pipe(tap(x => {
         if(x) this.companies$.next([...this.companies$.value, x]);

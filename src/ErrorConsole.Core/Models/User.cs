@@ -7,6 +7,11 @@ namespace ErrorConsole.Core.Models
 {
     public class User: AggregateRoot
     {
+        public User()
+        {
+
+        }
+
         public User(Guid userId, string username = null, byte[] salt= null, string password = null) {
             Apply(new UserCreated()
             {
@@ -17,7 +22,7 @@ namespace ErrorConsole.Core.Models
             });
         }
 
-        public void Apply(INotification @event)
+        public override void Apply(DomainEvent @event)
         {
             switch (@event)
             {

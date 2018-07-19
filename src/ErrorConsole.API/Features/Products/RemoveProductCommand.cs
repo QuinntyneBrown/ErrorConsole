@@ -32,7 +32,7 @@ namespace ErrorConsole.API.Features.Products
 
             public async Task Handle(Request request, CancellationToken cancellationToken)
             {
-                var product = _eventStore.Load<Product>(request.ProductId);
+                var product = _eventStore.Query<Product>(request.ProductId);
 
                 product.Remove();
 

@@ -4,14 +4,12 @@ using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using static Newtonsoft.Json.JsonConvert;
-using static System.Type;
 
 namespace ErrorConsole.Infrastructure.Data
 {
@@ -24,51 +22,8 @@ namespace ErrorConsole.Infrastructure.Data
             _context = context;
             _mediator = mediator;
         }
-        public IList<StoredEvent> All(Guid aggregateId)
-            => _context.StoredEvents.Where(x => x.StreamId == aggregateId).ToList();
-
-        public IQueryable<StoredEvent> GetAllByEventProperyValue<T>(string property, string value)
-        {
-            var propertyParameter = new SqlParameter("property", value);
-            var dotNetTypeParameter = new SqlParameter("dotNetType", typeof(T).AssemblyQualifiedName);
-            var stringBuilder = new StringBuilder();
-
-            stringBuilder.Append($"SELECT * from StoredEvents WHERE JSON_VALUE([Data],'$.{property}')= @property AND DotNetType = @dotnetType");
-            
-            return _context.StoredEvents.FromSql(stringBuilder.ToString(),propertyParameter, dotNetTypeParameter);
-        }
-
+        
         public void Dispose() => _context.Dispose();
-
-        public DomainEvent[] GetAllEventsByAggregateId(Guid aggregateId) {
-            var list = new List<DomainEvent>();
-
-            foreach(var storedEvent in All(aggregateId))
-                list.Add(JsonConvert.DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
-
-            return list.ToArray();
-        }
-
-        public List<(Guid, DomainEvent[])> GetAllEventsForAggregate<T>()
-            where T : AggregateRoot
-        {
-            var result = new List<(Guid, DomainEvent[])>();
-
-            foreach (var grouping in _context.StoredEvents
-                .Where(x => x.Aggregate == typeof(T).Name).GroupBy(x => x.StreamId))
-            {
-                var events = new List<DomainEvent>();
-                foreach (var storedEvent in grouping)
-                    events.Add(DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
-
-                result.Add((grouping.Key, events.ToArray()));
-            }
-
-            return result;
-        }
-
-        public T GetEventByEventProperyValue<T>(string property, string value)
-            => DeserializeObject<T>(GetAllByEventProperyValue<T>(property, value).Single().Data);
 
         public void Save(AggregateRoot aggregateRoot)
         {
@@ -101,11 +56,18 @@ namespace ErrorConsole.Infrastructure.Data
             }
         }
 
-        public T Load<T>(Guid id)
+        public T Query<T>(Guid id)
             where T : AggregateRoot
-            => Load<T>(id, GetAllEventsByAggregateId(id));
+        {
+            var list = new List<DomainEvent>();
 
-        public T Load<T>(Guid id, DomainEvent[] events)
+            foreach (var storedEvent in _context.StoredEvents.Where(x => x.StreamId == id))
+                list.Add(DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
+            
+            return Load<T>(list.ToArray());
+        }
+
+        private T Load<T>(DomainEvent[] events)
             where T : AggregateRoot
         {
             var aggregate = Activator.CreateInstance<T>();
@@ -118,15 +80,45 @@ namespace ErrorConsole.Infrastructure.Data
             return aggregate;
         }
 
+        public TAggregateRoot Query<TAggregateRoot>(string propertyName, string value)
+            where TAggregateRoot : AggregateRoot
+        {
+            var propertyParameter = new SqlParameter("property", value);
+            var dotNetTypeParameter = new SqlParameter("dotNetType", typeof(TAggregateRoot).AssemblyQualifiedName);
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.Append($"SELECT * from StoredEvents WHERE JSON_VALUE([Data],'$.{propertyName}')= @property AND DotNetType = @dotnetType");
+
+            var events = _context.StoredEvents.FromSql(stringBuilder.ToString(), propertyParameter, dotNetTypeParameter)
+                .Select(x => DeserializeObject(x.Data, Type.GetType(x.DotNetType)) as DomainEvent)
+                .ToArray();
+
+            if (events.Length < 1) return null;
+
+            return Load<TAggregateRoot>(events) as TAggregateRoot;
+        }
+
         public TAggregateRoot[] Query<TAggregateRoot>()
             where TAggregateRoot : AggregateRoot
         {
             var result = new List<TAggregateRoot>();
 
-            foreach (var ( aggregateId, events ) in GetAllEventsForAggregate<TAggregateRoot>())
-                result.Add(Load<TAggregateRoot>(aggregateId, events));
+            var list = new List<(Guid, DomainEvent[])>();
+
+            foreach (var grouping in _context.StoredEvents
+                .Where(x => x.Aggregate == typeof(TAggregateRoot).Name).GroupBy(x => x.StreamId))
+            {
+                var events = new List<DomainEvent>();
+                foreach (var storedEvent in grouping)
+                    events.Add(DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
+
+                list.Add((grouping.Key, events.ToArray()));
+            }
+            
+            foreach (var ( aggregateId, events ) in list)
+                result.Add(Load<TAggregateRoot>(events));
 
             return result.ToArray();
-        }
+        }        
     }
 }

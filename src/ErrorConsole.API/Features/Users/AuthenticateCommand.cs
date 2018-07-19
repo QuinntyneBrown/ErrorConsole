@@ -55,17 +55,15 @@ namespace ErrorConsole.API.Features.Users
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {                                
-                var userId = _eventStore.GetEventByEventProperyValue<UserCreated>("Username",request.Username).UserId;
+                var user = _eventStore.Query<User>("Username",request.Username);
                 
-                var user = _eventStore.Load<User>(userId);
-
                 if (user.Password != _passwordHasher.HashPassword(user.Salt, request.Password))
                     throw new System.Exception();
 
                 return Task.FromResult(new Response()
                 {
                     AccessToken = _securityTokenFactory.Create(request.Username),
-                    UserId = userId
+                    UserId = user.UserId
                 });
             }            
         }

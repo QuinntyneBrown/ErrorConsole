@@ -36,7 +36,7 @@ namespace ErrorConsole.API.Features.DigitalAssets
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
                 => new Response()
                 {
-                    DigitalAsset = DigitalAssetDto.FromDigitalAsset(_eventStore.Load<DigitalAsset>(request.DigitalAssetId))
+                    DigitalAsset = DigitalAssetDto.FromDigitalAsset(_eventStore.Query<DigitalAsset>(request.DigitalAssetId))
                 };
         }
     }

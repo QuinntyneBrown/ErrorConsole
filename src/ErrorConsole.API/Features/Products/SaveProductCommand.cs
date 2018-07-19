@@ -34,7 +34,7 @@ namespace ErrorConsole.API.Features.Products
 
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var product = _eventStore.Load<Product>(request.Product.ProductId);
+                var product = _eventStore.Query<Product>(request.Product.ProductId);
 
                 if (product == null) product = new Product(
                     Guid.NewGuid(), 

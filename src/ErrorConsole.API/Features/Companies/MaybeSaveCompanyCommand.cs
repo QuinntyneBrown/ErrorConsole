@@ -30,7 +30,7 @@ namespace ErrorConsole.API.Features.Companies
             {
                 if (RandomNumberFactory.Create() > 14) throw new Exception();
 
-                var company = _eventStore.Load<Company>(request.Company.CompanyId);
+                var company = _eventStore.Query<Company>(request.Company.CompanyId);
 
                 company.ChangeName(request.Company.Name);
 

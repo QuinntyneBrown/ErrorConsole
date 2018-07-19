@@ -36,7 +36,7 @@ namespace ErrorConsole.API.Features.Products
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
                 => new Response()
                 {
-                    Product = ProductDto.FromProduct(_eventStore.Load<Product>(request.ProductId))
+                    Product = ProductDto.FromProduct(_eventStore.Query<Product>(request.ProductId))
                 };
         }
     }

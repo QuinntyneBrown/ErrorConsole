@@ -59,15 +59,15 @@ namespace ErrorConsole.API
             {
                 var eventStore = new EventStore(context);
 
-                if (eventStore.GetAllByEventProperyValue<CompanyCreated>("Name", "Ralph").FirstOrDefault() == null)
+                if (eventStore.Query<Company>("Name", "Ralph") == null)
                     eventStore.Save(new Company(Guid.NewGuid(), "Ralph"));                    
 
 
-                if (eventStore.GetAllByEventProperyValue<CompanyCreated>("Name", "Kate Spade").FirstOrDefault() == null)
+                if (eventStore.Query<Company>("Name", "Kate Spade") == null)
                     eventStore.Save(new Company(Guid.NewGuid(), "Kate Spade"));
 
 
-                if (eventStore.GetAllByEventProperyValue<CompanyCreated>("Name", "Nike").FirstOrDefault() == null)
+                if (eventStore.Query<Company>("Name", "Nike") == null)
                     eventStore.Save(new Company(Guid.NewGuid(), "Nike"));
             }
         }

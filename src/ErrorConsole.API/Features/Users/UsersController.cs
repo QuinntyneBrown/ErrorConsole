@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ErrorConsole.API.Features.Users
 {
-    [Authorize]
     [ApiController]
     [Route("api/users")]
     public class UsersController

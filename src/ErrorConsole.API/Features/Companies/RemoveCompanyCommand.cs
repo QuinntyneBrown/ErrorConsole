@@ -22,7 +22,7 @@ namespace ErrorConsole.API.Features.Companies
 
             public Task Handle(Request request, CancellationToken cancellationToken)
             {
-                var company = _eventStore.Load<Company>(request.CompanyId);
+                var company = _eventStore.Query<Company>(request.CompanyId);
 
                 company.Delete();
                 

@@ -39,7 +39,7 @@ namespace ErrorConsole.API.Features.Companies
             {                
                 return Task.FromResult(new Response()
                 {
-                    Company = CompanyDto.FromCompany(_eventStore.Load<Company>(request.CompanyId))
+                    Company = CompanyDto.FromCompany(_eventStore.Query<Company>(request.CompanyId))
                 });
             }
         }

@@ -101,24 +101,17 @@ namespace ErrorConsole.Infrastructure.Data
         public TAggregateRoot[] Query<TAggregateRoot>()
             where TAggregateRoot : AggregateRoot
         {
-            var result = new List<TAggregateRoot>();
-
-            var list = new List<(Guid, DomainEvent[])>();
-
+            var aggregates = new List<TAggregateRoot>();
+            
             foreach (var grouping in _context.StoredEvents
                 .Where(x => x.Aggregate == typeof(TAggregateRoot).Name).GroupBy(x => x.StreamId))
-            {
-                var events = new List<DomainEvent>();
-                foreach (var storedEvent in grouping)
-                    events.Add(DeserializeObject(storedEvent.Data, Type.GetType(storedEvent.DotNetType)) as DomainEvent);
+            {                
+                var events = grouping.Select(x => DeserializeObject(x.Data, Type.GetType(x.DotNetType)) as DomainEvent).ToArray();
 
-                list.Add((grouping.Key, events.ToArray()));
+                aggregates.Add(Load<TAggregateRoot>(events.ToArray()));
             }
             
-            foreach (var ( aggregateId, events ) in list)
-                result.Add(Load<TAggregateRoot>(events));
-
-            return result.ToArray();
+            return aggregates.ToArray();
         }        
     }
 }

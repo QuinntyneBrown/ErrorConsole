@@ -1,6 +1,6 @@
 using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
-using MediatR;
+using ErrorConsole.Core.Exceptions;
 using System;
 
 namespace ErrorConsole.Core.Models
@@ -12,17 +12,16 @@ namespace ErrorConsole.Core.Models
 
         }
 
-        public User(Guid userId, string username = null, byte[] salt= null, string password = null) {
-            Apply(new UserCreated()
+        public User(Guid userId, string username = null, byte[] salt= null, string password = null) 
+            => Apply(new UserCreated()
             {
                 UserId = userId,
                 Username = username,
                 Password = password,
                 Salt = salt
             });
-        }
 
-        public override void Apply(DomainEvent @event)
+        protected override void When(DomainEvent @event)
         {
             switch (@event)
             {
@@ -32,9 +31,13 @@ namespace ErrorConsole.Core.Models
                     Salt = data.Salt;
                     Password = data.Password;
                     break;
-            }
+            }            
+        }
 
-            RaiseDomainEvent(@event);
+        protected override void EnsureValidState()
+        {
+            if (UserId == default(Guid))
+                throw new AggregateInvalidStateException();
         }
 
         public Guid UserId { get; set; }

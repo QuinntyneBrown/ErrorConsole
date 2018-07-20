@@ -27,11 +27,8 @@ namespace ErrorConsole.API
             {
                 var eventStore = new EventStore(context);
 
-                if (context.StoredEvents
-                    .Where(x => x.StreamId == new Guid("9f28229c-b39c-427e-8305-c1e07494d5d3"))
-                    .FirstOrDefault() == null)
+                if (eventStore.Query<User>("Username", "quinntynebrown@gmail.com") == null)
                 {
-
                     var salt = new byte[128 / 8];
                     using (var rng = RandomNumberGenerator.Create())
                     {
@@ -49,8 +46,6 @@ namespace ErrorConsole.API
 
                 context.SaveChanges();
             }
-
-
         }
 
         internal class CompanyConfiguration

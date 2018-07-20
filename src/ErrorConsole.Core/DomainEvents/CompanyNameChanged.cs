@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace ErrorConsole.Core.DomainEvents
 {
     public class CompanyNameChanged: DomainEvent

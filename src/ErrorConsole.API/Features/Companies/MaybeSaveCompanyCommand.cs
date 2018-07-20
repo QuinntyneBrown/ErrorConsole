@@ -1,5 +1,3 @@
-using ErrorConsole.Core.Common;
-using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
@@ -28,7 +26,7 @@ namespace ErrorConsole.API.Features.Companies
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                if (RandomNumberFactory.Create() > 14) throw new Exception();
+               //if (RandomNumberFactory.Create() > 14) throw new Exception();
 
                 var company = _eventStore.Query<Company>(request.Company.CompanyId);
 

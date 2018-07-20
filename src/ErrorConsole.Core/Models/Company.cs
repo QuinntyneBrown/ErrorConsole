@@ -1,6 +1,5 @@
 using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
-using MediatR;
 using System;
 using System.Collections.Generic;
 
@@ -14,19 +13,17 @@ namespace ErrorConsole.Core.Models
         }
 
         public Company(Guid id, string name)
-        {            
-            Apply(new CompanyCreated()
+            => Apply(new CompanyCreated()
             {
                 CompanyId = id,
                 Name = name
             });
-        }
 
         public Guid CompanyId { get; set; }           
 		public string Name { get; set; }
         public CompanyStatus Status { get; set; } = CompanyStatus.Active;
         public ICollection<Guid> ProductIds { get; set; }  = new HashSet<Guid>();
-        public override void Apply(DomainEvent @event)
+        protected override void When(DomainEvent @event)
         {
             switch (@event)
             {
@@ -42,15 +39,18 @@ namespace ErrorConsole.Core.Models
                     CompanyId = data.CompanyId;
                     Name = data.Name;
                     break;
-            }
-
-            RaiseDomainEvent(@event);
+            }            
         }
 
         public void ChangeName(string name)
             => Apply(new CompanyNameChanged(name));
 
         public void Delete() 
-            => Apply(new CompanyRemoved());        
+            => Apply(new CompanyRemoved());
+
+        protected override void EnsureValidState()
+        {
+
+        }
     }
 }

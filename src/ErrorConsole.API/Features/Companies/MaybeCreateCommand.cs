@@ -28,7 +28,7 @@ namespace ErrorConsole.API.Features.Companies
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                if (RandomNumberFactory.Create() > 5) throw new Exception();
+                //if (RandomNumberFactory.Create() > 5) throw new Exception();
                 
                 var company = new Company(Guid.NewGuid(),request.Company.Name);
 

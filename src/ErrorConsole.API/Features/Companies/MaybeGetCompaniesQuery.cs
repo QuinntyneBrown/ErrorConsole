@@ -27,7 +27,7 @@ namespace ErrorConsole.API.Features.Companies
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                if (RandomNumberFactory.Create() > 14) throw new Exception();
+                //if (RandomNumberFactory.Create() > 14) throw new Exception();
                 
                 return Task.FromResult(new Response()
                 {

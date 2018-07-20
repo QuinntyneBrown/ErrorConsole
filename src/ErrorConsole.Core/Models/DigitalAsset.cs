@@ -1,6 +1,5 @@
 ﻿using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
-using MediatR;
 using System;
 
 namespace ErrorConsole.Core.Models
@@ -13,15 +12,14 @@ namespace ErrorConsole.Core.Models
         }
 
         public DigitalAsset(Guid digitalAssetId, string name, byte[] bytes, string contentType)
-        {
-            Apply(new DigitalAssetCreated(digitalAssetId, name, bytes, contentType));
-        }
+            => Apply(new DigitalAssetCreated(digitalAssetId, name, bytes, contentType));
+
         public Guid DigitalAssetId { get; set; }
         public string Name { get; set; }
         public byte[] Bytes { get; set; }
         public string ContentType { get; set; }
 
-        public override void Apply(DomainEvent @event)
+        protected override void When(DomainEvent @event)
         {
             switch(@event)
             {
@@ -31,9 +29,12 @@ namespace ErrorConsole.Core.Models
                     ContentType = digitalAssetCreated.ContentType;
                     Name = digitalAssetCreated.Name;
                     break;
-            }
+            }            
+        }
 
-            RaiseDomainEvent(@event);
+        protected override void EnsureValidState()
+        {
+
         }
     }
 }

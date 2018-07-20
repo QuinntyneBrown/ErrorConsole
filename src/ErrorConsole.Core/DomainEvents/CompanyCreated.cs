@@ -1,4 +1,3 @@
-using MediatR;
 using System;
 
 namespace ErrorConsole.Core.DomainEvents

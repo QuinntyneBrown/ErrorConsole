@@ -26,7 +26,7 @@ namespace ErrorConsole.Core.Models
         public void Remove() {
 
         }
-        public override void Apply(DomainEvent @event)
+        protected override void When(DomainEvent @event)
         {
             switch(@event)
             {
@@ -38,9 +38,12 @@ namespace ErrorConsole.Core.Models
                     Description = productCreated.Description;
                     CompanyId = productCreated.CompanyId;
                     break;
-            }
+            }            
+        }
 
-            RaiseDomainEvent(@event);
+        protected override void EnsureValidState()
+        {
+
         }
     }
 }

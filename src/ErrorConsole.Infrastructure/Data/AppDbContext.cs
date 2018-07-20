@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +12,6 @@ namespace ErrorConsole.Infrastructure.Data
             :base(options) { }
 
         public DbSet<StoredEvent> StoredEvents { get; set; }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }       
+
     }
 }

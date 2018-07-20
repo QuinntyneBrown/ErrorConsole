@@ -1,6 +1,4 @@
 ﻿using ErrorConsole.Core.DomainEvents;
-using MediatR;
-using System;
 using System.Collections.Generic;
 
 namespace ErrorConsole.Core.Common
@@ -12,6 +10,13 @@ namespace ErrorConsole.Core.Common
         public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
         public void RaiseDomainEvent(DomainEvent @event) => _domainEvents.Add(@event);
         public void ClearEvents() => _domainEvents.Clear();
-        public abstract void Apply(DomainEvent @event);
+        public void Apply(DomainEvent @event)
+        {
+            When(@event);
+            EnsureValidState();
+            RaiseDomainEvent(@event);
+        }
+        protected abstract void When(DomainEvent @event);
+        protected abstract void EnsureValidState();
     }
 }

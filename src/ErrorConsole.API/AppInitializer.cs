@@ -1,4 +1,3 @@
-using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Identity;
 using ErrorConsole.Core.Models;
 using ErrorConsole.Infrastructure.Data;
@@ -6,19 +5,29 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 
 namespace ErrorConsole.API
 {
-    public class SeedData
+    public class AppInitializer: IDesignTimeDbContextFactory<AppDbContext>
     {
         public static void Seed(AppDbContext context)
         {
             UserConfiguration.Seed(context);
             CompanyConfiguration.Seed(context);
             context.SaveChanges();
+        }
+
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .AddUserSecrets(typeof(Startup).GetTypeInfo().Assembly)
+                .Build();
+
+            return new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer(configuration["Data:DefaultConnection:ConnectionString"])
+                .Options);
         }
 
         internal class UserConfiguration
@@ -67,18 +76,5 @@ namespace ErrorConsole.API
             }
         }
     }
-
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
-    {
-        public AppDbContext CreateDbContext(string[] args)
-        {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .AddUserSecrets(typeof(Startup).GetTypeInfo().Assembly)
-                .Build();
-
-            return new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
-                .UseSqlServer(configuration["Data:DefaultConnection:ConnectionString"])
-                .Options);
-        }
-    }
+    
 }

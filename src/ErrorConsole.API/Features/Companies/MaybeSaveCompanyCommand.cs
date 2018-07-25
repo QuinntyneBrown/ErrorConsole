@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ErrorConsole.API.Features.Companies
 {
-    public class MaybeSaveCompanyCommand
+    public class MaybeUpdateCompanyCommand
     {
         public class Request : IRequest<Response> {
             public CompanyDto Company { get; set; }

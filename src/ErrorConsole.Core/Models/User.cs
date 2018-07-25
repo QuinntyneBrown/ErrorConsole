@@ -7,11 +7,6 @@ namespace ErrorConsole.Core.Models
 {
     public class User: AggregateRoot
     {
-        public User()
-        {
-
-        }
-
         public User(Guid userId, string username = null, byte[] salt= null, string password = null) 
             => Apply(new UserCreated()
             {

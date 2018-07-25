@@ -43,7 +43,7 @@ namespace ErrorConsole.API
                 if (args.Contains("seeddb"))
                 {
                     context.Database.EnsureCreated();
-                    SeedData.Seed(context);            
+                    AppInitializer.Seed(context);            
                 }
                 
                 if (args.Contains("stop"))

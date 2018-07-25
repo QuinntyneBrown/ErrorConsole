@@ -1,0 +1,45 @@
+using ErrorConsole.Core.Common;
+using ErrorConsole.Core.DomainEvents;
+using System;
+
+namespace ErrorConsole.Core.Models
+{
+    public class Card: AggregateRoot
+    {
+        public Card(string name)
+            => Apply(new CardCreated(name));
+
+        public Guid CardId { get; set; } = Guid.NewGuid();          
+		public string Name { get; set; }        
+		public bool IsDeleted { get; set; }
+
+        protected override void EnsureValidState()
+        {
+            
+        }
+
+        protected override void When(DomainEvent @event)
+        {
+            switch (@event)
+            {
+                case CardCreated cardCreated:
+                    Name = cardCreated.Name;
+                    break;
+
+                case CardNameChanged cardNameChanged:
+                    Name = cardNameChanged.Name;
+                    break;
+
+                case CardRemoved cardRemoved:
+                    IsDeleted = true;
+                    break;
+            }
+        }
+
+        public void ChangeName(string name)
+            => Apply(new CardNameChanged(name));
+
+        public void Remove()
+            => Apply(new CardRemoved());
+    }
+}

@@ -7,11 +7,6 @@ namespace ErrorConsole.Core.Models
 {
     public class Company: AggregateRoot
     {
-        public Company()
-        {
-
-        }
-
         public Company(Guid id, string name)
             => Apply(new CompanyCreated()
             {

@@ -7,8 +7,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using static ErrorConsole.Infrastructure.Data.DeserializedEventStore;
 using static Newtonsoft.Json.JsonConvert;
+
 
 namespace ErrorConsole.Infrastructure.Data
 {
@@ -88,10 +90,9 @@ namespace ErrorConsole.Infrastructure.Data
         private T Load<T>(DomainEvent[] events)
             where T : AggregateRoot
         {
-            var aggregate = Activator.CreateInstance<T>();
+            var aggregate = (T)FormatterServices.GetUninitializedObject(typeof(T));
 
-            foreach (var @event in events)
-                aggregate.Apply(@event);
+            foreach (var @event in events) aggregate.Apply(@event);
 
             aggregate.ClearEvents();
 

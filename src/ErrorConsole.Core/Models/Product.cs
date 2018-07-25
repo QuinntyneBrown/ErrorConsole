@@ -7,11 +7,6 @@ namespace ErrorConsole.Core.Models
 {
     public class Product: AggregateRoot
     {
-        public Product()
-        {
-
-        }
-
         public Product(Guid productId,Guid companyId, string imageUrl, float price, string name, string description)
         {
             Apply(new ProductCreated(productId,companyId,imageUrl,price,name,description));

@@ -15,7 +15,7 @@ namespace ErrorConsole.API.Features.Companies
         public CompaniesController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost]
-        public async Task<ActionResult<MaybeSaveCompanyCommand.Response>> Update(MaybeSaveCompanyCommand.Request request)
+        public async Task<ActionResult<MaybeUpdateCompanyCommand.Response>> Update(MaybeUpdateCompanyCommand.Request request)
             => await _mediator.Send(request);
 
         [HttpPost("create")]

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace ErrorConsole.Infrastructure.Data
 {
@@ -12,6 +13,11 @@ namespace ErrorConsole.Infrastructure.Data
             :base(options) { }
 
         public DbSet<StoredEvent> StoredEvents { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
 
     }
 }

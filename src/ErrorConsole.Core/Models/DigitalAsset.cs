@@ -6,11 +6,6 @@ namespace ErrorConsole.Core.Models
 {
     public class DigitalAsset : AggregateRoot
     {
-        public DigitalAsset()
-        {
-
-        }
-
         public DigitalAsset(Guid digitalAssetId, string name, byte[] bytes, string contentType)
             => Apply(new DigitalAssetCreated(digitalAssetId, name, bytes, contentType));
 

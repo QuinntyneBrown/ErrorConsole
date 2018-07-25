@@ -34,7 +34,7 @@ namespace ErrorConsole.API.Features.Dashboards
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var dashboard = new Dashboard(request.Dashboard.Name);
+                var dashboard = new Dashboard(request.Dashboard.Name, request.Dashboard.UserId);
 
                 _eventStore.Save(dashboard);
                 

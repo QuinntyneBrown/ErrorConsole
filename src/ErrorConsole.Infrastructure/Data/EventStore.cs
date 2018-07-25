@@ -143,7 +143,7 @@ namespace ErrorConsole.Infrastructure.Data
         protected void Add(StoredEvent @event) {
             Events.TryAdd(@event.StoredEventId, new DeserializedStoredEvent(@event));
             _context.StoredEvents.Add(@event);
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }

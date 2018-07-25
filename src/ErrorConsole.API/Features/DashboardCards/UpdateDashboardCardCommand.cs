@@ -35,7 +35,13 @@ namespace ErrorConsole.API.Features.DashboardCards
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var dashboardCard = _eventStore.Query<DashboardCard>(request.DashboardCard.DashboardCardId);
-                
+
+                dashboardCard.UpdateOptions(
+                    request.DashboardCard.Options.Top,
+                    request.DashboardCard.Options.Width,
+                    request.DashboardCard.Options.Left,
+                    request.DashboardCard.Options.Height);
+
                 _eventStore.Save(dashboardCard);
 
                 return Task.FromResult(new Response() { DashboardCardId = request.DashboardCard.DashboardCardId }); 

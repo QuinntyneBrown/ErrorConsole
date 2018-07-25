@@ -1,5 +1,6 @@
 using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
+using Newtonsoft.Json;
 using System;
 
 namespace ErrorConsole.Core.Models
@@ -12,7 +13,8 @@ namespace ErrorConsole.Core.Models
         public Guid DashboardCardId { get; set; } = Guid.NewGuid();
         public Guid DashboardId { get; set; }
         public Guid CardId { get; set; }
-		public bool IsDeleted { get; set; }
+        public string Options { get; set; }
+        public bool IsDeleted { get; set; }
 
         protected override void EnsureValidState()
         {
@@ -31,10 +33,22 @@ namespace ErrorConsole.Core.Models
                 case DashboardCardRemoved dashboardCardRemoved:
                     IsDeleted = true;
                     break;
+
+                case DashboardCardOptionsUpdated dashboardCardOptionsUpdated:
+                    Options = JsonConvert.SerializeObject(new {
+                        dashboardCardOptionsUpdated.Top,
+                        dashboardCardOptionsUpdated.Height,
+                        dashboardCardOptionsUpdated.Width,
+                        dashboardCardOptionsUpdated.Left
+                    });
+                    break;
             }
         }
         
         public void Remove()
             => Apply(new DashboardCardRemoved());
+
+        public void UpdateOptions(int top, int width, int left, int height)
+            => Apply(new DashboardCardOptionsUpdated(top, width, height, width));
     }
 }

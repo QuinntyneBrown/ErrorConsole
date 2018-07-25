@@ -53,7 +53,21 @@ namespace ErrorConsole.API
                     eventStore.Save(user);
                 }
 
-                context.SaveChanges();
+                if (eventStore.Query<Dashboard>("Name", "Default") == null)
+                {
+                    var user = eventStore.Query<User>("Username", "quinntynebrown@gmail.com");
+
+                    var dashboard = new Dashboard("Default", user.UserId);
+
+                    eventStore.Save(dashboard);
+                }
+
+                if (eventStore.Query<Card>("Name", "Company") == null)
+                {
+                    var card = new Card("Company");
+
+                    eventStore.Save(card);
+                }
             }
         }
 

@@ -7,12 +7,14 @@ namespace ErrorConsole.API.Features.Dashboards
     {        
         public Guid DashboardId { get; set; }
         public string Name { get; set; }
+        public Guid UserId { get; set; }
 
         public static DashboardDto FromDashboard(Dashboard dashboard)
             => new DashboardDto
             {
                 DashboardId = dashboard.DashboardId,
-                Name = dashboard.Name
+                Name = dashboard.Name,
+                UserId = dashboard.UserId
             };
     }
 }

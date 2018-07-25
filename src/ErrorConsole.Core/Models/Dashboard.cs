@@ -7,10 +7,11 @@ namespace ErrorConsole.Core.Models
 {
     public class Dashboard: AggregateRoot
     {
-        public Dashboard(string name)
-            => Apply(new DashboardCreated(name));
+        public Dashboard(string name, Guid userId)
+            => Apply(new DashboardCreated(name, userId));
 
-        public Guid DashboardId { get; set; } = Guid.NewGuid();     
+        public Guid DashboardId { get; set; } = Guid.NewGuid();
+        public Guid UserId { get; set; }
         public ICollection<Guid> DashboardCardIds { get; set; }
 		public string Name { get; set; }        
 		public bool IsDeleted { get; set; }
@@ -26,6 +27,7 @@ namespace ErrorConsole.Core.Models
             {
                 case DashboardCreated dashboardCreated:
                     Name = dashboardCreated.Name;
+                    UserId = dashboardCreated.UserId;
                     DashboardCardIds = new HashSet<Guid>();
                     break;
 
@@ -40,6 +42,10 @@ namespace ErrorConsole.Core.Models
                 case DashboardCardAddedToDashboard dashboardCardAddedToDashboard:
                     DashboardCardIds.Add(dashboardCardAddedToDashboard.DashboardCardId);
                     break;
+
+                case DashboardCardRemovedFromDashboard dashboardCardRemovedFromDashboard:
+                    DashboardCardIds.Remove(dashboardCardRemovedFromDashboard.DashboardCardId);
+                    break;
             }
         }
 
@@ -51,5 +57,12 @@ namespace ErrorConsole.Core.Models
 
         public void AddDashboardCard(Guid dashboardCardId)
             => Apply(new DashboardCardAddedToDashboard(dashboardCardId));
+
+        public void RemoveDashboardCard(Guid dashboardCardId)
+        {
+            if (!DashboardCardIds.Contains(dashboardCardId)) throw new Exception();
+
+            Apply(new DashboardCardRemovedFromDashboard(dashboardCardId));
+        }
     }
 }

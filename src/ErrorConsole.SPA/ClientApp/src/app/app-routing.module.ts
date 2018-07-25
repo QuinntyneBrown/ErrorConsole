@@ -6,6 +6,7 @@ import { AuthGuard } from './core/auth.guard';
 import { MasterPageComponent } from './master-page.component';
 import { ProductsPageComponent } from './products/products-page.component';
 import { LoginComponent } from './users/login.component';
+import { DashboardPageComponent } from './dashboards/dashboard-page.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,10 @@ export const routes: Routes = [
       {
         path: 'products',
         component: ProductsPageComponent,
+      },
+      {
+        path: 'dashboard',
+        component: DashboardPageComponent,
       }
     ]
   }

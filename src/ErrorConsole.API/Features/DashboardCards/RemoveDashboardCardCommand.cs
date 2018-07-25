@@ -32,11 +32,18 @@ namespace ErrorConsole.API.Features.DashboardCards
 
             public Task Handle(Request request, CancellationToken cancellationToken)
             {
+                
                 var dashboardCard = _eventStore.Query<DashboardCard>(request.DashboardCardId);
 
+                var dashboard = _eventStore.Query<Dashboard>(dashboardCard.DashboardId);
+
+                dashboard.RemoveDashboardCard(dashboardCard.DashboardCardId);
+
                 dashboardCard.Remove();
-                
+
                 _eventStore.Save(dashboardCard);
+
+                _eventStore.Save(dashboard);
 
                 return Task.CompletedTask;
             }

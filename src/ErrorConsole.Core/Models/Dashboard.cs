@@ -8,7 +8,7 @@ namespace ErrorConsole.Core.Models
     public class Dashboard: AggregateRoot
     {
         public Dashboard(string name, Guid userId)
-            => Apply(new DashboardCreated(name, userId));
+            => Apply(new DashboardCreated(name,DashboardId,userId));
 
         public Guid DashboardId { get; set; } = Guid.NewGuid();
         public Guid UserId { get; set; }
@@ -28,9 +28,10 @@ namespace ErrorConsole.Core.Models
                 case DashboardCreated dashboardCreated:
                     Name = dashboardCreated.Name;
                     UserId = dashboardCreated.UserId;
+                    DashboardId = dashboardCreated.DashboardId;
                     DashboardCardIds = new HashSet<Guid>();
                     break;
-
+                    
                 case DashboardNameChanged dashboardNameChanged:
                     Name = dashboardNameChanged.Name;
                     break;
@@ -55,8 +56,9 @@ namespace ErrorConsole.Core.Models
         public void Remove()
             => Apply(new DashboardRemoved());
 
-        public void AddDashboardCard(Guid dashboardCardId)
-            => Apply(new DashboardCardAddedToDashboard(dashboardCardId));
+        public void AddDashboardCard(Guid dashboardCardId) {            
+            Apply(new DashboardCardAddedToDashboard(dashboardCardId));
+        }
 
         public void RemoveDashboardCard(Guid dashboardCardId)
         {

@@ -13,6 +13,9 @@ import { UsersModule } from './users/users.module';
 import { CompaniesModule } from './companies/companies.module';
 import { baseUrl } from './core/constants';
 import { ProductsModule } from './products/products.module';
+import { CardsModule } from './cards/cards.module';
+import { DashboardCardsModule } from './dashboard-cards/dashboard-cards.module';
+import { DashboardsModule } from './dashboards/dashboards.module';
 
 @NgModule({
   declarations: [
@@ -25,14 +28,18 @@ import { ProductsModule } from './products/products.module';
     BrowserAnimationsModule,
     CommonModule,
     AppRoutingModule,
+
+    CardsModule,
     CompaniesModule,
     CoreModule,
+    DashboardCardsModule,
+    DashboardsModule,
     ProductsModule,
     SharedModule,
     UsersModule
   ],
   providers: [
-    { provide: baseUrl, useValue: 'http://localhost:60787/' }
+    { provide: baseUrl, useValue: 'http://localhost:51780/' }
   ],
   bootstrap: [AppComponent]
 })

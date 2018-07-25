@@ -16,10 +16,6 @@ export class TimeoutInterceptor implements HttpInterceptor {
       tap(
         (httpEvent: HttpEvent<any>) => {
           httpEvent.type == HttpEventType.Sent;
-
-          console.log(`${httpEvent.type}: ${Date.now()}`);
-          
-          //console.log(JSON.stringify(httpEvent));
         }
       )
     );

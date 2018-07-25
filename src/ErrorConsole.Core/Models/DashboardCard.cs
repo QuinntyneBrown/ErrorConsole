@@ -8,7 +8,7 @@ namespace ErrorConsole.Core.Models
     public class DashboardCard: AggregateRoot
     {
         public DashboardCard(Guid dashoardId, Guid cardId)
-            => Apply(new DashboardCardCreated(dashoardId,cardId));
+            => Apply(new DashboardCardCreated(DashboardCardId,dashoardId,cardId));
 
         public Guid DashboardCardId { get; set; } = Guid.NewGuid();
         public Guid DashboardId { get; set; }
@@ -28,6 +28,8 @@ namespace ErrorConsole.Core.Models
                 case DashboardCardCreated dashboardCardCreated:
                     DashboardId = dashboardCardCreated.DashboardId;
                     CardId = dashboardCardCreated.CardId;
+                    DashboardCardId = dashboardCardCreated.DashboardCardId;
+                    Options = "{}";
                     break;
 
                 case DashboardCardRemoved dashboardCardRemoved:
@@ -49,6 +51,6 @@ namespace ErrorConsole.Core.Models
             => Apply(new DashboardCardRemoved());
 
         public void UpdateOptions(int top, int width, int left, int height)
-            => Apply(new DashboardCardOptionsUpdated(top, width, height, width));
+            => Apply(new DashboardCardOptionsUpdated(top, left, height, width));
     }
 }

@@ -102,17 +102,16 @@ namespace ErrorConsole.Infrastructure.Data
         public TAggregateRoot Query<TAggregateRoot>(string propertyName, string value)
             where TAggregateRoot : AggregateRoot
         {
-            var events = Get()
+            var storedEvents = Get()
                 .Where(x => {
                     var prop = Type.GetType(x.DotNetType).GetProperty(propertyName);
                     return prop != null && $"{prop.GetValue(x.Data, null)}" == value;
                 })
-                .Select(x => x.Data as DomainEvent)
                 .ToArray();
 
-            if (events.Length < 1) return null;
+            if (storedEvents.Length < 1) return null;
 
-            return Load<TAggregateRoot>(events) as TAggregateRoot;
+            return Query<TAggregateRoot>(storedEvents.First().StreamId) as TAggregateRoot;
         }
 
         public TAggregateRoot[] Query<TAggregateRoot>()

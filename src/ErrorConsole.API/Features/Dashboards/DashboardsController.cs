@@ -21,7 +21,11 @@ namespace ErrorConsole.API.Features.Dashboards
         [HttpPut]
         public async Task<ActionResult<UpdateDashboardCommand.Response>> Update([FromBody]UpdateDashboardCommand.Request request)
             => await _mediator.Send(request);
-        
+
+        [HttpGet("default")]
+        public async Task<ActionResult<GetDashboardByDefaultQuery.Response>> GetDefault()
+            => await _mediator.Send(new GetDashboardByDefaultQuery.Request());
+
         [HttpDelete("{dashboardId}")]
         public async Task Remove([FromRoute]RemoveDashboardCommand.Request request)
             => await _mediator.Send(request);            

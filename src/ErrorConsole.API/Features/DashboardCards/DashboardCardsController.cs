@@ -14,6 +14,15 @@ namespace ErrorConsole.API.Features.DashboardCards
 
         public DashboardCardsController(IMediator mediator) => _mediator = mediator;
 
+
+        [HttpPost("range")]
+        public async Task<ActionResult<SaveDashboardCardRangeCommand.Response>> SaveRange(SaveDashboardCardRangeCommand.Request request)
+            => await _mediator.Send(request);
+
+        [HttpGet("range")]
+        public async Task<ActionResult<GetDashboardCardByIdsQuery.Response>> GetByIds([FromQuery]GetDashboardCardByIdsQuery.Request request)
+            => await _mediator.Send(request);
+
         [HttpPost]
         public async Task<ActionResult<CreateDashboardCardCommand.Response>> Create(CreateDashboardCardCommand.Request request)
             => await _mediator.Send(request);

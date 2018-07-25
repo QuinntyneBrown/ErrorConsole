@@ -37,7 +37,13 @@ namespace ErrorConsole.API.Features.DashboardCards
                 var dashboardCard = new DashboardCard(request.DashboardCard.DashboardId,request.DashboardCard.CardId);
 
                 _eventStore.Save(dashboardCard);
-                
+
+                var dashboard = _eventStore.Query<Dashboard>(request.DashboardCard.DashboardId);
+
+                dashboard.AddDashboardCard(dashboardCard.DashboardCardId);
+
+                _eventStore.Save(dashboard);
+
                 return Task.FromResult(new Response() { DashboardCardId = dashboardCard.DashboardCardId });
             }
         }

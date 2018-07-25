@@ -1,3 +1,4 @@
+using ErrorConsole.API.Features.Cards;
 using ErrorConsole.Core.Models;
 using Newtonsoft.Json;
 using System;
@@ -9,6 +10,7 @@ namespace ErrorConsole.API.Features.DashboardCards
         public Guid DashboardCardId { get; set; }
         public Guid DashboardId { get; set; }
         public Guid CardId { get; set; }
+        public CardDto Card { get; set; }
         public OptionsDto Options { get; set; }
         public static DashboardCardDto FromDashboardCard(DashboardCard dashboardCard)
             => new DashboardCardDto

@@ -7,7 +7,7 @@ namespace ErrorConsole.Core.Models
     public class Card: AggregateRoot
     {
         public Card(string name)
-            => Apply(new CardCreated(name));
+            => Apply(new CardCreated(name,CardId));
 
         public Guid CardId { get; set; } = Guid.NewGuid();          
 		public string Name { get; set; }        
@@ -24,6 +24,7 @@ namespace ErrorConsole.Core.Models
             {
                 case CardCreated cardCreated:
                     Name = cardCreated.Name;
+                    CardId = cardCreated.CardId;
                     break;
 
                 case CardNameChanged cardNameChanged:

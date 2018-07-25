@@ -1,8 +1,10 @@
+using ErrorConsole.API.Features.DashboardCards;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using FluentValidation;
 using MediatR;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,10 +36,21 @@ namespace ErrorConsole.API.Features.Dashboards
 			public Handler(IEventStore eventStore) => _eventStore = eventStore;
 
             public Task<Response> Handle(Request request, CancellationToken cancellationToken)
-			     => Task.FromResult(new Response()
+            {
+                var dashboard = _eventStore.Query<Dashboard>(request.DashboardId);
+                var dashboardCards = new List<DashboardCardDto>();
+
+                foreach (var dashboardCardId in dashboard.DashboardCardIds)
                 {
-                    Dashboard = DashboardDto.FromDashboard(_eventStore.Query<Dashboard>(request.DashboardId))
+                    dashboardCards.Add(DashboardCardDto.FromDashboardCard(_eventStore.Query<DashboardCard>(dashboardCardId)));
+                }
+
+                return Task.FromResult(new Response()
+                {
+                    Dashboard = DashboardDto.FromDashboard(dashboard, dashboardCards)
                 });
+
+            }
         }
     }
 }

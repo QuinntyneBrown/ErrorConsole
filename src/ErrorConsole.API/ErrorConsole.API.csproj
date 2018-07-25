@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Cards\" />
+    <Folder Include="Features\Dashboards\" />
+    <Folder Include="Features\DashboardCards\" />
     <Folder Include="ProcessManagers\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

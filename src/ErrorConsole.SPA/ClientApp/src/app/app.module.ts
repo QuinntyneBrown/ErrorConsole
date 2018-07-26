@@ -39,7 +39,7 @@ import { DashboardsModule } from './dashboards/dashboards.module';
     UsersModule
   ],
   providers: [
-    { provide: baseUrl, useValue: 'http://localhost:51780/' }
+    { provide: baseUrl, useValue: 'http://localhost:60787/' }
   ],
   bootstrap: [AppComponent]
 })

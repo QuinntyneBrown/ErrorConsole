@@ -2,16 +2,21 @@
   <h2>Companies</h2>
 </section>
 
-<button mat-button (click)="refresh()">
-  Refresh
-</button>
+<section class="actions">
+  <button mat-button (click)="refresh()">
+    Refresh
+  </button>
 
-<button mat-button (click)="openAddCompanyOverlay()" [disabled]="hasErrors">
-  Add Company
-</button>
+  <button mat-button (click)="openAddCompanyOverlay()" [disabled]="hasErrors">
+    Add Company
+  </button>
+</section>
 
-<mat-list role="list">
-  <mat-list-item *ngFor="let company of (companies$ | async)" role="listitem">{{ company.name }}</mat-list-item>
-</mat-list>
+<igx-grid [data]="(companies$ | async)"
+          [autoGenerate]="false"
+          height="100%"
+          width="100%">
 
+  <igx-column [field]="'name'" [header]="'Name'"></igx-column>
 
+</igx-grid>

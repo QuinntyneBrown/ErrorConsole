@@ -31,13 +31,14 @@ namespace ErrorConsole.API
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseMiddleware<RequestLoggerMiddleware>();
+
             if(Configuration.GetValue<bool>("isTest"))
                 app.UseMiddleware<AutoAuthenticationMiddleware>();
                     
             app.UseAuthentication()            
                 .UseCors(CorsDefaults.Policy)            
                 .UseMvc()
-                .UseAppService()
                 .UseSwagger()
                 .UseSwaggerUI(options =>
                 {

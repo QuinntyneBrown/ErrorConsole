@@ -12,12 +12,11 @@ namespace ErrorConsole.Core.Common
             _domainEvents.Add(@event);
         }
         public void ClearEvents() => _domainEvents.Clear();
-        public AggregateRoot Apply(DomainEvent @event)
+        public void Apply(DomainEvent @event)
         {
             When(@event);
             EnsureValidState();
             RaiseDomainEvent(@event);
-            return this;
         }
         protected abstract void When(DomainEvent @event);
         protected abstract void EnsureValidState();

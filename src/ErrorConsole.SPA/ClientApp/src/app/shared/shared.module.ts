@@ -34,6 +34,8 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
+import { IgxGridModule } from "igniteui-angular";
+
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ErrorConsoleComponent } from './error-console.component';
@@ -43,6 +45,8 @@ import { ErrorConsoleComponent } from './error-console.component';
     ErrorConsoleComponent
   ],
   imports: [
+    IgxGridModule,
+
     MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -81,6 +85,8 @@ import { ErrorConsoleComponent } from './error-console.component';
     ReactiveFormsModule
   ],
   exports: [
+    IgxGridModule,
+
     MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,

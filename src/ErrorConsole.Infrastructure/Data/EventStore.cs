@@ -1,4 +1,4 @@
-﻿using ErrorConsole.Core.Common;
+using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;

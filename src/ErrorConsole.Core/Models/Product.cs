@@ -1,6 +1,5 @@
 ﻿using ErrorConsole.Core.Common;
 using ErrorConsole.Core.DomainEvents;
-using MediatR;
 using System;
 
 namespace ErrorConsole.Core.Models
@@ -17,10 +16,10 @@ namespace ErrorConsole.Core.Models
         public float Price { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public bool IsDeleted { get; set; }
+        public void Remove() 
+            => Apply(new ProductRemoved());
 
-        public void Remove() {
-
-        }
         protected override void When(DomainEvent @event)
         {
             switch(@event)
@@ -32,6 +31,10 @@ namespace ErrorConsole.Core.Models
                     Name = productCreated.Name;
                     Description = productCreated.Description;
                     CompanyId = productCreated.CompanyId;
+                    break;
+
+                case ProductRemoved productRemoved:
+                    IsDeleted = true;
                     break;
             }            
         }

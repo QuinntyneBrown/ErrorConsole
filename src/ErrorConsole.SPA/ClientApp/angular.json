@@ -39,6 +39,9 @@
               },
               {
                 "input": "./node_modules/quill/dist/quill.bubble.css"
+              },
+              {
+                "input": "./node_modules/igniteui-angular/styles/igniteui-angular.css"
               }
             ],
             "scripts": [

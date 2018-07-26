@@ -1,4 +1,4 @@
-﻿using ErrorConsole.Core.Common;
+using ErrorConsole.Core.Common;
 using System;
 
 namespace ErrorConsole.Core.Interfaces

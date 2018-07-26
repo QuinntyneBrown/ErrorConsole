@@ -63,11 +63,10 @@ namespace ErrorConsole.API
                 }
 
                 if (eventStore.Query<Card>("Name", "Company") == null)
-                {
-                    var card = new Card("Company");
+                    eventStore.Save(new Card("Company"));
 
-                    eventStore.Save(card);
-                }
+                if (eventStore.Query<Card>("Name", "Products") == null)
+                    eventStore.Save(new Card("Products"));
             }
         }
 

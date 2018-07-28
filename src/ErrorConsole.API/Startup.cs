@@ -1,6 +1,7 @@
 using ErrorConsole.Core.Extensions;
 using ErrorConsole.Core.Identity;
 using ErrorConsole.Core.Middleware;
+using ErrorConsole.Infrastructure;
 using ErrorConsole.Infrastructure.Extensions;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -19,6 +20,9 @@ namespace ErrorConsole.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
             services.AddCustomMvc()
                 .AddFluentValidation(cfg => { cfg.RegisterValidatorsFromAssemblyContaining<Startup>(); });
 

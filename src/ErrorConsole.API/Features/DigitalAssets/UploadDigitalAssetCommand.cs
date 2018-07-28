@@ -67,7 +67,7 @@ namespace ErrorConsole.API.Features.DigitalAssets
                                 var bytes = StreamHelper.ReadToEnd(targetStream);
                                 var contentType = section.ContentType;
 
-                                _eventStore.Save(new DigitalAsset(Guid.NewGuid(), name, bytes, contentType));
+                                _eventStore.Save(new DigitalAsset(name, bytes, contentType));
                             }
                         }
                     }

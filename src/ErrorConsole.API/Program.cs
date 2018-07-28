@@ -1,4 +1,6 @@
+using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Infrastructure.Data;
+using MediatR;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,9 @@ namespace ErrorConsole.API
             using (var scope = services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                var eventStore = new EventStore(context, mediator);
+
                 if (args.Contains("ci"))
                     args = new string[4] { "dropdb", "migratedb", "seeddb", "stop" };
 
@@ -43,7 +47,7 @@ namespace ErrorConsole.API
                 if (args.Contains("seeddb"))
                 {
                     context.Database.EnsureCreated();
-                    AppInitializer.Seed(context);            
+                    AppInitializer.Seed(eventStore);            
                 }
                 
                 if (args.Contains("stop"))

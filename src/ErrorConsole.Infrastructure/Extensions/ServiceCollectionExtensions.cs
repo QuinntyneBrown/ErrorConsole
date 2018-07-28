@@ -10,7 +10,7 @@ namespace ErrorConsole.Infrastructure.Extensions
         public static IServiceCollection AddDataStore(this IServiceCollection services,
                                                string connectionString)
         {
-            services.AddScoped<IAppDbContext, AppDbContext>();
+            services.AddTransient<IAppDbContext, AppDbContext>();
             services.AddScoped<IEventStore, EventStore>();
 
             return services.AddDbContext<AppDbContext>(options 

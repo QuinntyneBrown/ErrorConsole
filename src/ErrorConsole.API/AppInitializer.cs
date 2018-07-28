@@ -1,4 +1,5 @@
 using ErrorConsole.Core.Identity;
+using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using ErrorConsole.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,10 @@ namespace ErrorConsole.API
 {
     public class AppInitializer: IDesignTimeDbContextFactory<AppDbContext>
     {
-        public static void Seed(AppDbContext context)
+        public static void Seed(IEventStore eventStore)
         {
-            UserConfiguration.Seed(context);
-            CompanyConfiguration.Seed(context);
-            context.SaveChanges();
+            UserConfiguration.Seed(eventStore);
+            CompanyConfiguration.Seed(eventStore);
         }
 
         public AppDbContext CreateDbContext(string[] args)
@@ -32,9 +32,8 @@ namespace ErrorConsole.API
 
         internal class UserConfiguration
         {
-            public static void Seed(AppDbContext context)
+            public static void Seed(IEventStore eventStore)
             {
-                var eventStore = new EventStore(context);
 
                 if (eventStore.Query<User>("Username", "quinntynebrown@gmail.com") == null)
                 {
@@ -72,10 +71,9 @@ namespace ErrorConsole.API
 
         internal class CompanyConfiguration
         {
-            public static void Seed(AppDbContext context)
+            public static void Seed(IEventStore eventStore)
             {
-                var eventStore = new EventStore(context);
-
+                
                 if (eventStore.Query<Company>("Name", "Ralph") == null)
                     eventStore.Save(new Company(Guid.NewGuid(), "Ralph"));                    
 

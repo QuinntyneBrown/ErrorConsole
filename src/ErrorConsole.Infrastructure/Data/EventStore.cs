@@ -3,11 +3,15 @@ using ErrorConsole.Core.DomainEvents;
 using ErrorConsole.Core.Interfaces;
 using ErrorConsole.Core.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using static ErrorConsole.Infrastructure.Data.DeserializedEventStore;
 using static Newtonsoft.Json.JsonConvert;
 
@@ -45,10 +49,20 @@ namespace ErrorConsole.Infrastructure.Data
     {
         private readonly IAppDbContext _context;
         private readonly IMediator _mediator;
+        private readonly IBackgroundTaskQueue _queue;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public EventStore(IAppDbContext context, IMediator mediator = default(IMediator)) {
+        public EventStore(
+            IAppDbContext context, 
+            IMediator mediator = default(IMediator), 
+            IBackgroundTaskQueue queue = default(IBackgroundTaskQueue),
+            IServiceScopeFactory serviceScopeFactory = default(IServiceScopeFactory)
+            ) {
             _context = context;
             _mediator = mediator;
+            _queue = queue;
+            _serviceScopeFactory = serviceScopeFactory;
+            _configuration = configuration;
         }
         
         public void Dispose() => _context.Dispose();
@@ -141,8 +155,37 @@ namespace ErrorConsole.Infrastructure.Data
 
         protected void Add(StoredEvent @event) {
             Events.TryAdd(@event.StoredEventId, new DeserializedStoredEvent(@event));
-            _context.StoredEvents.Add(@event);
-            _context.SaveChanges();
+            Persist(@event);
+        }
+
+        public void Persist(StoredEvent @event)
+        {
+            if (_serviceScopeFactory != default(IServiceScopeFactory))
+            {
+                _queue.QueueBackgroundWorkItem(async token =>
+                {
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    using (var context = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+                    {                        
+                        try
+                        {
+                            context.StoredEvents.Add(@event);
+                            context.SaveChanges();
+                        }
+                        catch (Exception e)
+                        {
+                            throw e;
+                        }
+                    }
+
+                    await Task.CompletedTask;
+                });
+            }
+            else
+            {
+                _context.StoredEvents.Add(@event);
+                _context.SaveChanges();
+            }
         }
     }
 }
